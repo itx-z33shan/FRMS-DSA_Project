@@ -5,8 +5,22 @@
 
 export const HASH_TABLE_SIZE = 101;
 export const MAX_LOGS = 1000;
-export const MAX_PACKETS = 500;
+export const MAX_PACKETS = 24;
 export const MAX_RULES = 200;
+
+export interface HeapTraceStep {
+    array: Rule[];
+    comparing: [number, number] | null;
+    swapping: [number, number] | null;
+    message: string;
+}
+
+export interface SortTraceStep {
+    logs: LogEntry[];
+    comparing: [number, number] | null;
+    swapping: [number, number] | null;
+    message: string;
+}
 
 // ============================================================
 //  CLASS: Packet
@@ -271,6 +285,56 @@ export class HashTable {
     public getRawTable() {
         return this.table;
     }
+
+    public hashFunctionWithTrace(ip: string): {
+        steps: { char: string; charCode: number; termValue: number; intermediateHash: number; multiplier: number }[];
+        finalIndex: number;
+    } {
+        const steps: { char: string; charCode: number; termValue: number; intermediateHash: number; multiplier: number }[] = [];
+        let hash = 0;
+        const prime = 31;
+        let multiplier = 1;
+
+        for (let i = 0; i < ip.length; i++) {
+            const char = ip[i];
+            const charCode = ip.charCodeAt(i);
+            const val = charCode - 32 + 1;
+            const term = (val * multiplier) % HASH_TABLE_SIZE;
+            hash = (hash + term) % HASH_TABLE_SIZE;
+            
+            steps.push({
+                char,
+                charCode,
+                termValue: term,
+                intermediateHash: hash,
+                multiplier
+            });
+            
+            multiplier = (multiplier * prime) % HASH_TABLE_SIZE;
+        }
+        
+        const finalIndex = (hash + HASH_TABLE_SIZE) % HASH_TABLE_SIZE;
+        return { steps, finalIndex };
+    }
+
+    public searchWithTrace(ip: string): {
+        hashIndex: number;
+        checkedKeys: string[];
+        matchedRule: Rule | null;
+    } {
+        const hashIndex = this.hashFunction(ip);
+        const checkedKeys: string[] = [];
+        let curr = this.table[hashIndex];
+        
+        while (curr !== null) {
+            checkedKeys.push(curr.key);
+            if (curr.key === ip) {
+                return { hashIndex, checkedKeys, matchedRule: curr.value };
+            }
+            curr = curr.next;
+        }
+        return { hashIndex, checkedKeys, matchedRule: null };
+    }
 }
 
 // ============================================================
@@ -355,6 +419,147 @@ export class MaxHeap {
     public getRawArray(): Rule[] {
         return [...this.heap];
     }
+
+    public pushWithTrace(rule: Rule): HeapTraceStep[] {
+        const steps: HeapTraceStep[] = [];
+        if (this.heap.length >= MAX_RULES) {
+            return steps;
+        }
+        this.heap.push(rule);
+        let idx = this.heap.length - 1;
+        steps.push({
+            array: [...this.heap],
+            comparing: null,
+            swapping: null,
+            message: `Inserted Rule ${rule.ruleID} at index ${idx} (priority ${rule.priority})`
+        });
+
+        while (idx > 0) {
+            const parent = Math.floor((idx - 1) / 2);
+            steps.push({
+                array: [...this.heap],
+                comparing: [idx, parent],
+                swapping: null,
+                message: `Comparing parent index ${parent} (priority ${this.heap[parent].priority}) with child index ${idx} (priority ${this.heap[idx].priority})`
+            });
+
+            if (this.heap[idx].priority > this.heap[parent].priority) {
+                steps.push({
+                    array: [...this.heap],
+                    comparing: null,
+                    swapping: [idx, parent],
+                    message: `Child priority is higher. Swapping index ${idx} with parent index ${parent}`
+                });
+                const temp = this.heap[idx];
+                this.heap[idx] = this.heap[parent];
+                this.heap[parent] = temp;
+                
+                idx = parent;
+                steps.push({
+                    array: [...this.heap],
+                    comparing: null,
+                    swapping: null,
+                    message: `Heap after swap at index ${idx}`
+                });
+            } else {
+                steps.push({
+                    array: [...this.heap],
+                    comparing: null,
+                    swapping: null,
+                    message: `Parent priority is larger/equal. Heap property satisfied.`
+                });
+                break;
+            }
+        }
+        return steps;
+    }
+
+    public popWithTrace(): HeapTraceStep[] {
+        const steps: HeapTraceStep[] = [];
+        if (this.empty()) return steps;
+        
+        const root = this.heap[0];
+        if (this.heap.length === 1) {
+            this.heap = [];
+            steps.push({
+                array: [],
+                comparing: null,
+                swapping: null,
+                message: `Removed the only rule ${root.ruleID}. Heap is now empty.`
+            });
+            return steps;
+        }
+
+        const last = this.heap.pop()!;
+        this.heap[0] = last;
+        steps.push({
+            array: [...this.heap],
+            comparing: null,
+            swapping: null,
+            message: `Moved last rule ${last.ruleID} to root index 0. Rebuilding heap...`
+        });
+
+        let idx = 0;
+        const size = this.heap.length;
+        while (true) {
+            const left = 2 * idx + 1;
+            const right = 2 * idx + 2;
+            let largest = idx;
+
+            if (left < size) {
+                steps.push({
+                    array: [...this.heap],
+                    comparing: [left, largest],
+                    swapping: null,
+                    message: `Comparing left child index ${left} (priority ${this.heap[left].priority}) with index ${largest} (priority ${this.heap[largest].priority})`
+                });
+                if (this.heap[left].priority > this.heap[largest].priority) {
+                    largest = left;
+                }
+            }
+
+            if (right < size) {
+                steps.push({
+                    array: [...this.heap],
+                    comparing: [right, largest],
+                    swapping: null,
+                    message: `Comparing right child index ${right} (priority ${this.heap[right].priority}) with largest index ${largest} (priority ${this.heap[largest].priority})`
+                });
+                if (this.heap[right].priority > this.heap[largest].priority) {
+                    largest = right;
+                }
+            }
+
+            if (largest !== idx) {
+                steps.push({
+                    array: [...this.heap],
+                    comparing: null,
+                    swapping: [idx, largest],
+                    message: `Swapping index ${idx} with child index ${largest} (higher priority)`
+                });
+                const temp = this.heap[idx];
+                this.heap[idx] = this.heap[largest];
+                this.heap[largest] = temp;
+                
+                idx = largest;
+                steps.push({
+                    array: [...this.heap],
+                    comparing: null,
+                    swapping: null,
+                    message: `Heap after swap at index ${idx}`
+                });
+            } else {
+                steps.push({
+                    array: [...this.heap],
+                    comparing: null,
+                    swapping: null,
+                    message: `Heap property restored at index ${idx}. Rebuild complete.`
+                });
+                break;
+            }
+        }
+        return steps;
+    }
 }
 
 // ============================================================
@@ -412,6 +617,23 @@ export class BST {
 
     public getRoot(): BSTNode | null {
         return this.root;
+    }
+
+    public traceSearch(ip: string): { path: string[]; found: boolean } {
+        const path: string[] = [];
+        let curr = this.root;
+        while (curr !== null) {
+            path.push(curr.ip);
+            if (ip === curr.ip) {
+                return { path, found: true };
+            }
+            if (ip < curr.ip) {
+                curr = curr.left;
+            } else {
+                curr = curr.right;
+            }
+        }
+        return { path, found: false };
     }
 
     public clear(): void {
@@ -624,6 +846,151 @@ export class LogManager {
         return this.logs.filter(l => l.action === "BLOCKED").length;
     }
 
+    public sortByTimestampWithTrace(): SortTraceStep[] {
+        const steps: SortTraceStep[] = [];
+        const logsCopy = [...this.logs];
+        
+        const partition = (low: number, high: number): number => {
+            const pivot = logsCopy[high].timestamp;
+            let i = low - 1;
+            for (let j = low; j < high; j++) {
+                steps.push({
+                    logs: [...logsCopy],
+                    comparing: [j, high],
+                    swapping: null,
+                    message: `Comparing index ${j} (${logsCopy[j].timestamp}) with pivot index ${high} (${pivot})`
+                });
+                if (logsCopy[j].timestamp <= pivot) {
+                    i++;
+                    steps.push({
+                        logs: [...logsCopy],
+                        comparing: null,
+                        swapping: [i, j],
+                        message: `IP/timestamp <= pivot. Swapping index ${i} with index ${j}`
+                    });
+                    const temp = logsCopy[i];
+                    logsCopy[i] = logsCopy[j];
+                    logsCopy[j] = temp;
+                }
+            }
+            steps.push({
+                logs: [...logsCopy],
+                comparing: null,
+                swapping: [i + 1, high],
+                message: `Placing pivot at correct position. Swapping index ${i + 1} with index ${high}`
+            });
+            const temp = logsCopy[i + 1];
+            logsCopy[i + 1] = logsCopy[high];
+            logsCopy[high] = temp;
+            return i + 1;
+        };
+
+        const quickSort = (low: number, high: number) => {
+            if (low < high) {
+                const pi = partition(low, high);
+                quickSort(low, pi - 1);
+                quickSort(pi + 1, high);
+            }
+        };
+
+        if (logsCopy.length > 1) {
+            quickSort(0, logsCopy.length - 1);
+        }
+        
+        steps.push({
+            logs: [...logsCopy],
+            comparing: null,
+            swapping: null,
+            message: `Quick Sort completed!`
+        });
+        
+        return steps;
+    }
+
+    public sortBySeverityWithTrace(): SortTraceStep[] {
+        const steps: SortTraceStep[] = [];
+        const logsCopy = [...this.logs];
+        
+        const merge = (left: number, mid: number, right: number) => {
+            const n1 = mid - left + 1;
+            const n2 = right - mid;
+            
+            const L: LogEntry[] = new Array(n1);
+            const R: LogEntry[] = new Array(n2);
+            
+            for (let i = 0; i < n1; i++) L[i] = logsCopy[left + i];
+            for (let j = 0; j < n2; j++) R[j] = logsCopy[mid + 1 + j];
+            
+            let i = 0, j = 0, k = left;
+            while (i < n1 && j < n2) {
+                steps.push({
+                    logs: [...logsCopy],
+                    comparing: [left + i, mid + 1 + j],
+                    swapping: null,
+                    message: `Comparing priority at left index ${left + i} (P:${L[i].priority}) and right index ${mid + 1 + j} (P:${R[j].priority})`
+                });
+                if (L[i].priority >= R[j].priority) {
+                    steps.push({
+                        logs: [...logsCopy],
+                        comparing: null,
+                        swapping: [k, left + i],
+                        message: `Left index is higher/equal. Copying to position ${k}`
+                    });
+                    logsCopy[k++] = L[i++];
+                } else {
+                    steps.push({
+                        logs: [...logsCopy],
+                        comparing: null,
+                        swapping: [k, mid + 1 + j],
+                        message: `Right index is higher. Copying to position ${k}`
+                    });
+                    logsCopy[k++] = R[j++];
+                }
+            }
+            
+            while (i < n1) {
+                steps.push({
+                    logs: [...logsCopy],
+                    comparing: null,
+                    swapping: [k, left + i],
+                    message: `Copying remaining element from left index to position ${k}`
+                });
+                logsCopy[k++] = L[i++];
+            }
+            while (j < n2) {
+                steps.push({
+                    logs: [...logsCopy],
+                    comparing: null,
+                    swapping: [k, mid + 1 + j],
+                    message: `Copying remaining element from right index to position ${k}`
+                });
+                logsCopy[k++] = R[j++];
+            }
+        };
+
+        const mergeSort = (left: number, right: number) => {
+            if (left < right) {
+                const mid = Math.floor(left + (right - left) / 2);
+                mergeSort(left, mid);
+                mergeSort(mid + 1, right);
+                merge(left, mid, right);
+            }
+        };
+
+        if (logsCopy.length > 1) {
+            mergeSort(0, logsCopy.length - 1);
+        }
+        
+        steps.push({
+            logs: [...logsCopy],
+            comparing: null,
+            swapping: null,
+            message: `Merge Sort completed!`
+        });
+        
+        return steps;
+    }
+
     public getAllowedCount(): number {
         return this.logs.filter(l => l.action === "ALLOWED").length;
     }
@@ -705,7 +1072,15 @@ export class Firewall {
     }
 
     // Processes next packet in queue, returning it and the decision details
-    public processNext(): { packet: Packet; decision: any } | null {
+    public processNext(): { 
+        packet: Packet; 
+        decision: { 
+            action: "ALLOWED" | "BLOCKED"; 
+            ruleID: string; 
+            priority: number; 
+            checkStep: string; 
+        }; 
+    } | null {
         if (this.packetQueue.empty()) return null;
         const pkt = this.packetQueue.pop()!;
         const decision = this.processSinglePacket(pkt);
@@ -713,6 +1088,7 @@ export class Firewall {
     }
 
     public addRule(r: Rule): void {
+        this.removeRule(r.targetIP); // Prevent duplicate entries in heap and BST
         this.ruleTable.insert(r.targetIP, r);
         this.ruleHeap.push(r);
         if (r.action === "BLOCK") {
