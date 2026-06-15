@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { 
   Shield, 
-  ShieldAlert, 
-  ShieldCheck, 
   Activity, 
   Trash2, 
   Play, 
@@ -19,7 +17,7 @@ import {
   ArrowRightLeft,
   X
 } from 'lucide-react';
-import { MaxHeap, Firewall, Packet, Rule, LogEntry, MAX_PACKETS, MAX_RULES, HASH_TABLE_SIZE, BSTNode } from './utils/structures';
+import { MaxHeap, Firewall, Packet, Rule, LogEntry, MAX_PACKETS, HASH_TABLE_SIZE, BSTNode } from './utils/structures';
 import type { HeapTraceStep, SortTraceStep } from './utils/structures';
 
 interface StepperStep {
@@ -1329,6 +1327,7 @@ export default function App() {
 
 
   // BST Tree Visualization layout
+  // BST Tree Visualization layout - Redesigned for Premium Professional Theme
   const renderBSTNode = (node: BSTNode | null, x: number, y: number, dx: number): React.ReactNode[] => {
     if (!node) return [];
     const elements: React.ReactNode[] = [];
@@ -1336,17 +1335,17 @@ export default function App() {
     const isPath = renderState.highlights.bstPath?.includes(node.ip);
     const isActiveNode = renderState.highlights.bstActiveNode === node.ip;
     
-    let circleFill = "#11192e";
-    let strokeColor = "#06b6d4";
-    let circleClass = "transition-all duration-300 hover:fill-cyber-cardLight hover:stroke-cyber-emerald";
+    let circleFill = "#1e293b"; // Slate-800
+    let strokeColor = "#334155"; // Slate-700
+    let circleClass = "transition-all duration-300 hover:fill-slate-800 hover:stroke-indigo-400";
     
     if (isActiveNode) {
-      circleFill = "#f59e0b";
-      strokeColor = "#f59e0b";
-      circleClass = "animate-pulse filter drop-shadow-[0_0_6px_rgba(245,158,11,0.8)]";
+      circleFill = "#ea580c"; // Orange-600
+      strokeColor = "#f97316"; // Orange-500
+      circleClass = "animate-pulse filter drop-shadow-[0_0_8px_rgba(244,63,94,0.5)]";
     } else if (isPath) {
-      circleFill = "#1c3c6e";
-      strokeColor = "#10b981";
+      circleFill = "#1e1b4b"; // Indigo-950
+      strokeColor = "#6366f1"; // Indigo-500
     }
 
     if (node.left) {
@@ -1354,7 +1353,7 @@ export default function App() {
         <line 
           key={`line-l-${node.ip}`}
           x1={x} y1={y} x2={x - dx} y2={y + 50} 
-          stroke={isPath && renderState.highlights.bstPath?.includes(node.left.ip) ? "#10b981" : "#1e2d54"} 
+          stroke={isPath && renderState.highlights.bstPath?.includes(node.left.ip) ? "#6366f1" : "#1e293b"} 
           strokeWidth="2"
         />
       );
@@ -1365,7 +1364,7 @@ export default function App() {
         <line 
           key={`line-r-${node.ip}`}
           x1={x} y1={y} x2={x + dx} y2={y + 50} 
-          stroke={isPath && renderState.highlights.bstPath?.includes(node.right.ip) ? "#10b981" : "#1e2d54"} 
+          stroke={isPath && renderState.highlights.bstPath?.includes(node.right.ip) ? "#6366f1" : "#1e293b"} 
           strokeWidth="2"
         />
       );
@@ -1380,9 +1379,9 @@ export default function App() {
           className={circleClass}
         />
         <text 
-          x={x} y={y + 4} 
-          textAnchor="middle" fill="#e2e8f0" fontSize="8" fontWeight="bold"
-          className="pointer-events-none"
+          x={x} y={y + 3} 
+          textAnchor="middle" fill="#f8fafc" fontSize="8" fontWeight="600"
+          className="pointer-events-none font-mono"
         >
           {node.ip.split('.').slice(-2).join('.')}
         </text>
@@ -1393,7 +1392,7 @@ export default function App() {
     return elements;
   };
 
-  // Max-Heap Binary Tree Layout
+  // Max-Heap Binary Tree Layout - Redesigned for Premium Professional Theme
   const renderHeapNode = (idx: number, x: number, y: number, dx: number): React.ReactNode[] => {
     const activeHeapRules = renderState.heapRules;
     if (idx >= activeHeapRules.length) return [];
@@ -1405,17 +1404,17 @@ export default function App() {
     const isComparing = renderState.highlights.heapComparing?.includes(idx);
     const isSwapping = renderState.highlights.heapSwapping?.includes(idx);
     
-    let circleFill = "#11192e";
-    let strokeColor = rule.action === "BLOCK" ? "#f43f5e" : "#10b981";
-    let circleClass = "transition-all duration-300 hover:fill-cyber-cardLight";
+    let circleFill = "#0f172a"; // slate-900
+    let strokeColor = rule.action === "BLOCK" ? "#f43f5e" : "#10b981"; // state-block : state-allow
+    let circleClass = "transition-all duration-300 hover:fill-slate-800";
     
     if (isSwapping) {
-      circleFill = "#f59e0b";
-      strokeColor = "#f59e0b";
-      circleClass = "animate-bounce filter drop-shadow-[0_0_6px_rgba(245,158,11,0.8)]";
+      circleFill = "#ea580c"; // orange-600
+      strokeColor = "#ea580c";
+      circleClass = "animate-bounce filter drop-shadow-[0_0_8px_rgba(234,88,12,0.6)]";
     } else if (isComparing) {
-      circleFill = "#1c3c6e";
-      strokeColor = "#06b6d4";
+      circleFill = "#1e1b4b"; // Indigo-950
+      strokeColor = "#6366f1"; // Indigo-500
     }
     
     if (leftIdx < activeHeapRules.length) {
@@ -1423,7 +1422,7 @@ export default function App() {
         <line 
           key={`h-line-l-${idx}`}
           x1={x} y1={y} x2={x - dx} y2={y + 50} 
-          stroke={isComparing && renderState.highlights.heapComparing?.includes(leftIdx) ? "#06b6d4" : "#1e2d54"} 
+          stroke={isComparing && renderState.highlights.heapComparing?.includes(leftIdx) ? "#6366f1" : "#1e293b"} 
           strokeWidth="2"
         />
       );
@@ -1435,7 +1434,7 @@ export default function App() {
         <line 
           key={`h-line-r-${idx}`}
           x1={x} y1={y} x2={x + dx} y2={y + 50} 
-          stroke={isComparing && renderState.highlights.heapComparing?.includes(rightIdx) ? "#06b6d4" : "#1e2d54"} 
+          stroke={isComparing && renderState.highlights.heapComparing?.includes(rightIdx) ? "#6366f1" : "#1e293b"} 
           strokeWidth="2"
         />
       );
@@ -1445,23 +1444,23 @@ export default function App() {
     elements.push(
       <g key={`h-node-${idx}`} className="group cursor-pointer">
         <circle 
-          cx={x} cy={y} r="17" 
+          cx={x} cy={y} r="18" 
           fill={circleFill} 
           stroke={strokeColor} 
           strokeWidth="2" 
           className={circleClass}
         />
         <text 
-          x={x} y={y + 1} 
-          textAnchor="middle" fill="#e2e8f0" fontSize="8" fontWeight="bold"
-          className="pointer-events-none"
+          x={x} y={y - 1} 
+          textAnchor="middle" fill="#f8fafc" fontSize="8.5" fontWeight="700"
+          className="pointer-events-none font-sans"
         >
           {rule.ruleID}
         </text>
         <text 
-          x={x} y={y + 9} 
-          textAnchor="middle" fill="#94a3b8" fontSize="6.5"
-          className="pointer-events-none"
+          x={x} y={y + 8} 
+          textAnchor="middle" fill="#94a3b8" fontSize="7" fontWeight="500"
+          className="pointer-events-none font-mono"
         >
           P:{rule.priority}
         </text>
@@ -1475,416 +1474,445 @@ export default function App() {
   const blockRate = stats.total > 0 ? Math.round((stats.blocked / stats.total) * 100) : 0;
 
   return (
-    <div className="h-screen w-screen bg-cyber-darker text-cyber-text grid-bg relative overflow-hidden scanline flex flex-col">
+    <div className="h-screen w-screen bg-[#090d16] text-[#f8fafc] flex flex-col overflow-hidden font-sans antialiased relative">
       
-      {/* GLOW DECORATIONS */}
-      <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[40%] bg-cyber-cyan/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
-      <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[40%] bg-cyber-emerald/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+      {/* Premium mesh background glows */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 40% at 20% 0%, rgba(99,102,241,0.06) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 80% 100%, rgba(139,92,246,0.05) 0%, transparent 60%)' }}></div>
+      <div className="absolute top-0 left-1/3 w-[700px] h-[400px] bg-indigo-600/[0.03] rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-violet-600/[0.04] rounded-full blur-[150px] pointer-events-none"></div>
 
-      {/* HEADER */}
-      <header className="border-b border-cyber-border/90 bg-[#02050c]/95 backdrop-blur-2xl sticky top-0 z-50 shadow-[0_12px_40px_-20px_rgba(0,0,0,0.75)]">
-        <div className="max-w-7xl mx-auto px-5 py-4 flex flex-col lg:flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-cyber-cyan/15 rounded-2xl border border-cyber-cyan/30 glow-cyan">
-              <Shield className="w-6 h-6 text-cyber-cyan filter drop-shadow-[0_0_5px_rgba(6,182,212,0.5)]" />
+      {/* TOP NAVIGATION HEADER */}
+      <header className="flex-shrink-0 bg-[#0b101f]/90 backdrop-blur-xl border-b border-slate-800/70 px-6 py-3.5 flex items-center justify-between z-30">
+        <div className="flex items-center gap-3.5">
+          {/* Brand Shield */}
+          <div className="relative p-2.5 rounded-xl border border-indigo-500/25" style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(139,92,246,0.10) 100%)' }}>
+            <Shield className="w-5 h-5 text-indigo-400" />
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full border border-[#0b101f]" style={{ animation: 'scanPulse 2s infinite ease-in-out' }}></span>
+          </div>
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-[15px] font-bold font-display tracking-tight text-white">
+                FRMS
+              </h1>
+              <span className="text-[10px] text-slate-500 font-medium">·</span>
+              <span className="text-[13px] font-semibold text-slate-300 font-display">Firewall Control Deck</span>
+              <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 font-bold tracking-wider uppercase">Live</span>
             </div>
-            <div>
-              <div className="flex flex-wrap items-center gap-2.5">
-                <h1 className="text-lg font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyber-cyan via-blue-400 to-cyber-emerald font-sans">
-                  FRMS CONTROL MAINBOARD
-                </h1>
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-cyber-emerald/10 border border-cyber-emerald/30 text-cyber-emerald font-mono text-[9px] uppercase tracking-wider animate-pulse">
-                  <span className="w-1 h-1 rounded-full bg-cyber-emerald"></span>
-                  SHIELD: ACTIVE
+            <p className="text-[10px] text-slate-500 font-medium mt-0.5 tracking-wide">
+              Rule Management System · DSA Traversal Stepper
+            </p>
+          </div>
+        </div>
+
+        {/* HEADER STATS INDICATORS */}
+        <div className="hidden md:flex items-center gap-3">
+          {/* Stat Pills */}
+          <div className="flex items-center gap-1 bg-slate-900/60 border border-slate-800/80 rounded-xl px-3 py-2">
+            {[
+              { label: 'Processed', val: stats.total,   color: 'text-indigo-400' },
+              { label: 'Blocked',   val: stats.blocked,  color: 'text-rose-400' },
+              { label: 'Allowed',   val: stats.allowed,  color: 'text-emerald-400' },
+              { label: 'Block Rate',val: `${blockRate}%`, color: 'text-amber-500' },
+            ].map((stat, i, arr) => (
+              <React.Fragment key={stat.label}>
+                <div className="px-3 text-center">
+                  <div className="text-[8px] text-slate-500 font-semibold uppercase tracking-wider">{stat.label}</div>
+                  <div className={`text-sm font-bold font-mono mt-0.5 ${stat.color}`}>{stat.val}</div>
                 </div>
-              </div>
-              <p className="text-[10px] text-cyber-textMuted font-mono uppercase tracking-widest mt-0.5">
-                Firewall Rule Management & DSA Stepper Visualizer
-              </p>
-            </div>
+                {i < arr.length - 1 && <span className="text-slate-800 text-lg font-thin">|</span>}
+              </React.Fragment>
+            ))}
           </div>
-          <div className="flex items-center gap-4 font-mono text-[11px] text-cyber-textMuted bg-[#0d1325]/80 px-4 py-2 rounded-full border border-cyber-border/50 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)]">
-            <span>Course: CSC211</span>
-            <span className="text-cyber-border">|</span>
-            <span>Team: Attaullah, Monis, Zeeshan</span>
+
+          <div className="hidden lg:flex items-center gap-2.5 text-[10px] text-slate-500 font-mono bg-slate-900/50 px-3.5 py-2 rounded-xl border border-slate-800/60">
+            <span className="text-slate-600">CSC211</span>
+            <span className="text-slate-800">·</span>
+            <span className="text-slate-400">Attaullah · Monis · Zeeshan</span>
           </div>
-          <button onClick={() => setSidebarCollapsed(s => !s)} title="Toggle sidebar" aria-label="Toggle sidebar" className="ml-3 p-3 rounded-full bg-[#0d1426]/70 hover:bg-[#0d1426]/85 focus:outline-none border border-cyber-border/60">
-            <ArrowRightLeft className={`w-5 h-5 transform ${sidebarCollapsed ? 'rotate-180' : ''}`} />
+
+          <button 
+            onClick={() => setSidebarCollapsed(s => !s)} 
+            title={sidebarCollapsed ? "Expand Config Panel" : "Collapse Config Panel"} 
+            aria-label="Toggle config panel" 
+            className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-500 hover:text-indigo-400 hover:border-indigo-500/40 hover:bg-indigo-600/5 transition-all duration-200"
+          >
+            <ArrowRightLeft className={`w-4 h-4 transition-transform duration-300 ${sidebarCollapsed ? 'rotate-180' : ''}`} />
           </button>
         </div>
       </header>
 
-      {/* MAIN WORKSPACE: SIDEBAR + VISUALIZATION */}
-      <div className="flex flex-1 overflow-hidden relative z-10">
+      {/* DASHBOARD GRID: SIDEBAR + MAIN WORKSPACE */}
+      <div className="flex-1 flex min-h-0 overflow-hidden relative z-20">
 
-        {/* ═══════════ LEFT SIDEBAR ═══════════ */}
-        <aside className={`${sidebarCollapsed ? 'w-16' : 'w-[360px]'} h-full flex-shrink-0 flex flex-col overflow-y-auto border-r border-cyber-border/60 bg-[#070913]/80 backdrop-blur transition-all duration-200`}> 
+        {/* ═══════════ CONFIGURATION SIDEBAR (LEFT) ═══════════ */}
+        <aside className={`${sidebarCollapsed ? 'w-16' : 'w-80'} h-full flex-shrink-0 flex flex-col overflow-hidden border-r border-slate-800 bg-[#0b101f]/70 transition-all duration-300`}> 
 
-          {/* Compact collapsed sidebar */}
+          {/* Compact view when sidebar collapsed */}
           {sidebarCollapsed && (
-            <div className="flex flex-col items-center py-4 gap-3">
-              <button onClick={() => setSidebarCollapsed(false)} title="Expand" aria-label="Expand sidebar" className="p-3 rounded-full bg-[#0d1426]/60 hover:bg-[#0d1426]/70 focus:outline-none">
-                <ArrowRightLeft className="w-5 h-5 text-cyber-cyan" />
+            <div className="flex flex-col items-center py-6 gap-4">
+              <button 
+                onClick={() => setSidebarCollapsed(false)} 
+                title="Expand Sidebar" 
+                aria-label="Expand sidebar" 
+                className="p-2.5 rounded-xl bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 hover:bg-indigo-600/20 transition"
+              >
+                <ArrowRightLeft className="w-4 h-4 text-indigo-400" />
               </button>
-              <div className="flex flex-col gap-3 mt-4">
-                <button title="Load Defaults" aria-label="Load defaults" className="p-3 rounded hover:bg-[#0d1426]/50 focus:outline-none"><RefreshCw className="w-5 h-5 text-cyber-textMuted" /></button>
-                <button title="Step Packet" aria-label="Step packet" className="p-3 rounded hover:bg-[#0d1426]/50 focus:outline-none"><Play className="w-5 h-5 text-cyber-textMuted" /></button>
-                <button title="Animate Step" aria-label="Animate step" className="p-3 rounded hover:bg-[#0d1426]/50 focus:outline-none"><Activity className="w-5 h-5 text-cyber-textMuted" /></button>
-                <button title="Process All" aria-label="Process all" className="p-3 rounded hover:bg-[#0d1426]/50 focus:outline-none"><PlayCircle className="w-5 h-5 text-cyber-textMuted" /></button>
-                <button title="Reset" aria-label="Reset firewall" className="p-3 rounded hover:bg-[#0d1426]/50 focus:outline-none"><Trash2 className="w-5 h-5 text-cyber-textMuted" /></button>
+              <div className="flex flex-col gap-3 mt-6">
+                <button onClick={handleLoadDefaults} title="Load Default Configs" className="p-3 rounded-xl hover:bg-slate-800 transition text-slate-400 hover:text-white"><RefreshCw className="w-5 h-5" /></button>
+                <button onClick={handleStepProcess} title="Step Single Packet" className="p-3 rounded-xl hover:bg-slate-800 transition text-slate-400 hover:text-white"><Play className="w-5 h-5" /></button>
+                <button onClick={handleAnimateProcessPacket} title="Step with Animations" className="p-3 rounded-xl hover:bg-slate-800 transition text-slate-400 hover:text-white"><Activity className="w-5 h-5" /></button>
+                <button onClick={handleProcessAll} title="Process All in Queue" className="p-3 rounded-xl hover:bg-slate-800 transition text-slate-400 hover:text-white"><PlayCircle className="w-5 h-5" /></button>
+                <button onClick={handleReset} title="Reset Inspection Queue" className="p-3 rounded-xl hover:bg-slate-800 transition text-slate-400 hover:text-white"><Trash2 className="w-5 h-5" /></button>
               </div>
             </div>
           )}
 
-          <div className={`${sidebarCollapsed ? 'hidden' : 'block'} w-full`}> 
+          {/* Expanded Configuration Panel */}
+          <div className={`${sidebarCollapsed ? 'hidden' : 'flex flex-col h-full min-h-0'} w-full`}> 
 
-          {/* STATS STRIP */}
-          <div className="border-b border-cyber-border/40 p-4 flex-shrink-0 bg-[#020714]/85 backdrop-blur rounded-b-[2rem] shadow-inner shadow-cyber-border/10">
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-[#0d1426]/60 border border-cyber-border/60 p-2 rounded-lg">
-                <div className="text-[9px] font-mono text-cyber-textMuted uppercase">Processed</div>
-                <div className="text-lg font-bold font-mono text-cyber-cyan">{stats.total}<span className="text-[9px] text-cyber-textMuted ml-1">PKT</span></div>
+            {/* MINI LIVE TRAFFIC MAP (PINNED TOP) */}
+            <div className="px-4 pt-3 pb-3 border-b border-slate-800/60 bg-[#0b101f] relative overflow-hidden flex-shrink-0">
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Live Traffic Monitor</span>
               </div>
-              <div className="bg-[#0d1426]/60 border border-cyber-border/60 p-2 rounded-lg">
-                <div className="text-[9px] font-mono text-cyber-textMuted uppercase flex items-center gap-1"><ShieldAlert className="w-2.5 h-2.5 text-cyber-rose" />Blocked</div>
-                <div className="text-lg font-bold font-mono text-cyber-rose">{stats.blocked}</div>
-              </div>
-              <div className="bg-[#0d1426]/60 border border-cyber-border/60 p-2 rounded-lg">
-                <div className="text-[9px] font-mono text-cyber-textMuted uppercase flex items-center gap-1"><ShieldCheck className="w-2.5 h-2.5 text-cyber-emerald" />Allowed</div>
-                <div className="text-lg font-bold font-mono text-cyber-emerald">{stats.allowed}</div>
-              </div>
-              <div className="bg-[#0d1426]/60 border border-cyber-border/60 p-2 rounded-lg">
-                <div className="text-[9px] font-mono text-cyber-textMuted uppercase">Block Rate</div>
-                <div className="text-lg font-bold font-mono text-cyber-amber">{blockRate}%</div>
-              </div>
-              <div className="bg-[#0d1426]/60 border border-cyber-border/60 p-2 rounded-lg">
-                <div className="text-[9px] font-mono text-cyber-textMuted uppercase">Queue</div>
-                <div className="text-lg font-bold font-mono text-cyber-text">{renderState.packets.length}<span className="text-[9px] text-cyber-textMuted ml-1">/{MAX_PACKETS}</span></div>
-              </div>
-              <div className="bg-[#0d1426]/60 border border-cyber-border/60 p-2 rounded-lg">
-                <div className="text-[9px] font-mono text-cyber-textMuted uppercase">Rules</div>
-                <div className="text-lg font-bold font-mono text-cyber-text">{renderState.heapRules.length}<span className="text-[9px] text-cyber-textMuted ml-1">/{MAX_RULES}</span></div>
-              </div>
-            </div>
-          </div>
-
-          {/* ACTION BUTTONS */}
-          <div className="border-b border-cyber-border/40 p-3 flex-shrink-0">
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-mono text-[9px] font-bold text-cyber-cyan uppercase tracking-wider">Inspection Engine</span>
-              <span className="px-1.5 py-0.5 rounded text-[8px] bg-cyber-emerald/10 border border-cyber-emerald/30 text-cyber-emerald font-mono font-bold uppercase animate-pulse">● ACTIVE</span>
-            </div>
-            <div className="mb-3 rounded-2xl bg-[#06111e]/95 border border-cyber-border/60 p-3 text-[10px] text-cyber-textMuted font-mono leading-5">
-              <div className="font-semibold text-cyber-cyan mb-1">Quick Tip</div>
-              <p>Use the action buttons to process packets step-by-step or run the full firewall simulation. Collapse the sidebar to reveal more visualization space.</p>
-            </div>
-            <div className="grid grid-cols-2 gap-1.5">
-              <button onClick={handleLoadDefaults} aria-label="Load defaults" className="py-2.5 px-3 min-h-[44px] rounded-lg bg-cyber-card border border-cyber-border text-sm font-mono font-bold text-cyber-text hover:bg-cyber-cardLight hover:border-cyber-cyan/50 hover:text-cyber-cyan transition-all flex items-center justify-center gap-2 cursor-pointer">
-                <RefreshCw className="w-4 h-4" /> Load Defaults
-              </button>
-              <button onClick={handleStepProcess} aria-label="Step packet" className="py-2.5 px-3 min-h-[44px] rounded-lg bg-cyber-cyan/10 border border-cyber-cyan/35 text-cyber-cyan text-sm font-mono font-bold hover:bg-cyber-cyan/20 hover:border-cyber-cyan/60 transition-all flex items-center justify-center gap-2 cursor-pointer">
-                <Play className="w-4 h-4 fill-cyber-cyan" /> Step Packet
-              </button>
-              <button onClick={handleAnimateProcessPacket} aria-label="Animate step" className="py-2.5 px-3 min-h-[44px] rounded-lg bg-cyber-emerald/10 border border-cyber-emerald/35 text-cyber-emerald text-sm font-mono font-bold hover:bg-cyber-emerald/20 hover:border-cyber-emerald/60 transition-all flex items-center justify-center gap-2 cursor-pointer">
-                <Activity className="w-4 h-4 animate-pulse" /> Animate Step
-              </button>
-              <button onClick={handleProcessAll} aria-label="Process all" className="py-2.5 px-3 min-h-[44px] rounded-lg bg-gradient-to-r from-blue-600 to-cyber-cyan text-white text-sm font-mono font-bold hover:brightness-110 transition-all flex items-center justify-center gap-2 cursor-pointer">
-                <PlayCircle className="w-4 h-4" /> Process All
-              </button>
-              <button onClick={handleReset} aria-label="Reset firewall" className="col-span-2 py-2.5 rounded-lg min-h-[44px] bg-cyber-rose/10 border border-cyber-rose/35 text-cyber-rose text-sm font-mono font-bold hover:bg-cyber-rose/20 hover:border-cyber-rose/60 transition-all flex items-center justify-center gap-2 cursor-pointer">
-                <Trash2 className="w-4 h-4" /> Reset Firewall
-              </button>
-            </div>
-          </div>
-
-          {/* SCROLLABLE FORMS AREA */}
-          <div className="flex-1 overflow-y-auto p-3 space-y-4 scrollbar-thin">
-
-
-          {stepResult && (
-
-              <div className="bg-cyber-card border border-cyber-border rounded-xl p-4 shadow-lg animate-fade-in relative overflow-hidden">
-                <div className={`absolute top-0 left-0 w-1.5 h-full ${stepResult.action === "BLOCKED" ? "bg-cyber-rose" : "bg-cyber-emerald"}`}></div>
-                <div className="flex justify-between items-start mb-2">
-                  <span className={`text-xs font-bold font-mono px-2 py-0.5 rounded ${stepResult.action === "BLOCKED" ? "bg-cyber-rose/10 text-cyber-rose" : "bg-cyber-emerald/10 text-cyber-emerald"}`}>
-                    {stepResult.action}
-                  </span>
-                  <button onClick={() => setStepResult(null)} className="text-cyber-textMuted hover:text-cyber-text">
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-                <h4 className="text-xs font-bold font-mono text-cyber-textMuted mb-2">STEP PROCESSING FEEDBACK</h4>
-                <div className="bg-cyber-darker p-2.5 rounded border border-cyber-border font-mono text-xs space-y-1.5">
-                  <div className="flex justify-between"><span className="text-cyber-textMuted">Src IP:</span><span>{stepResult.packet.sourceIP}</span></div>
-                  <div className="flex justify-between"><span className="text-cyber-textMuted">Dest IP:</span><span>{stepResult.packet.destIP}</span></div>
-                  <div className="flex justify-between"><span className="text-cyber-textMuted">Port:</span><span>{stepResult.packet.port} ({stepResult.packet.protocol})</span></div>
-                  <div className="flex justify-between"><span className="text-cyber-textMuted">Rule Match:</span><span className="text-cyber-cyan">{stepResult.ruleID}</span></div>
-                  <div className="flex justify-between"><span className="text-cyber-textMuted">Priority:</span><span>{stepResult.priority}</span></div>
-                  <div className="text-[10px] text-cyber-textMuted border-t border-cyber-border/40 pt-1 mt-1 text-center font-sans italic">
-                    Decision Source: {stepResult.checkStep}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* RULE FORM */}
-            <div className="glass-panel p-5 rounded-2xl">
-              <h2 className="text-xs font-bold font-mono tracking-wider text-cyber-cyan flex items-center gap-2 mb-4 uppercase">
-                <Plus className="w-4 h-4 text-cyber-cyan" /> ADD FIREWALL RULE
-              </h2>
-              <form onSubmit={handleAnimateAddRule} className="space-y-3 font-mono text-xs">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[10px] text-cyber-textMuted uppercase mb-1">Rule ID</label>
-                    <input 
-                      type="text" 
-                      value={newRule.ruleID}
-                      onChange={e => setNewRule(prev => ({ ...prev, ruleID: e.target.value }))}
-                      className="w-full bg-[#030408]/65 border border-cyber-border/80 p-2 rounded text-cyber-text focus:outline-none focus:border-cyber-cyan focus:ring-1 focus:ring-cyber-cyan/25 transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] text-cyber-textMuted uppercase mb-1">Target IP</label>
-                    <input 
-                      type="text" 
-                      value={newRule.targetIP}
-                      onChange={e => setNewRule(prev => ({ ...prev, targetIP: e.target.value }))}
-                      className="w-full bg-[#030408]/65 border border-cyber-border/80 p-2 rounded text-cyber-text focus:outline-none focus:border-cyber-cyan focus:ring-1 focus:ring-cyber-cyan/25 transition-all"
-                      placeholder="192.168.1.100"
-                    />
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-3 gap-3">
-                  <div>
-                    <label className="block text-[10px] text-cyber-textMuted uppercase mb-1">Action</label>
-                    <select 
-                      value={newRule.action} 
-                      onChange={e => setNewRule(prev => ({ ...prev, action: e.target.value as 'BLOCK' | 'ALLOW' }))}
-                      className="w-full bg-[#030408]/65 border border-cyber-border/80 p-2 rounded text-cyber-text focus:outline-none focus:border-cyber-cyan transition-all cursor-pointer"
-                    >
-                      <option value="BLOCK">BLOCK</option>
-                      <option value="ALLOW">ALLOW</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] text-cyber-textMuted uppercase mb-1">Priority</label>
-                    <input 
-                      type="number" 
-                      min="1" 
-                      max="10" 
-                      value={newRule.priority}
-                      onChange={e => setNewRule(prev => ({ ...prev, priority: Number(e.target.value) }))}
-                      className="w-full bg-[#030408]/65 border border-cyber-border/80 p-2 rounded text-cyber-text focus:outline-none focus:border-cyber-cyan transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] text-cyber-textMuted uppercase mb-1">Protocol</label>
-                    <select 
-                      value={newRule.protocol} 
-                      onChange={e => setNewRule(prev => ({ ...prev, protocol: e.target.value }))}
-                      className="w-full bg-[#030408]/65 border border-cyber-border/80 p-2 rounded text-cyber-text focus:outline-none focus:border-cyber-cyan transition-all cursor-pointer"
-                    >
-                      <option value="ANY">ANY</option>
-                      <option value="TCP">TCP</option>
-                      <option value="UDP">UDP</option>
-                      <option value="HTTP">HTTP</option>
-                    </select>
-                  </div>
-                </div>
-
-                <button 
-                  type="submit" 
-                  title="Insert this rule into the hash table and heap priority queue"
-                  className="w-full mt-2.5 py-2 rounded-lg bg-cyber-cyan/10 hover:bg-cyber-cyan/25 border border-cyber-cyan/35 text-cyber-cyan font-bold transition-all flex items-center justify-center gap-1.5 shadow"
-                >
-                  <Plus className="w-4 h-4" /> Insert to Table & Heap
-                </button>
-              </form>
-            </div>
-
-            {/* PACKET FORM */}
-            <div className="glass-panel p-5 rounded-2xl">
-              <h2 className="text-xs font-bold font-mono tracking-wider text-cyber-emerald flex items-center gap-2 mb-4 uppercase">
-                <Plus className="w-4 h-4 text-cyber-emerald" /> QUEUE PACKET MANUALLY
-              </h2>
-              <form onSubmit={handleAddPacket} className="space-y-3 font-mono text-xs">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[10px] text-cyber-textMuted uppercase mb-1">Source IP</label>
-                    <input 
-                      type="text" 
-                      value={newPacket.sourceIP}
-                      onChange={e => setNewPacket(prev => ({ ...prev, sourceIP: e.target.value }))}
-                      className="w-full bg-[#030408]/65 border border-cyber-border/80 p-2 rounded text-cyber-text focus:outline-none focus:border-cyber-emerald focus:ring-1 focus:ring-cyber-emerald/25 transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] text-cyber-textMuted uppercase mb-1">Dest IP</label>
-                    <input 
-                      type="text" 
-                      value={newPacket.destIP}
-                      onChange={e => setNewPacket(prev => ({ ...prev, destIP: e.target.value }))}
-                      className="w-full bg-[#030408]/65 border border-cyber-border/80 p-2 rounded text-cyber-text focus:outline-none focus:border-cyber-emerald focus:ring-1 focus:ring-cyber-emerald/25 transition-all"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-3">
-                  <div>
-                    <label className="block text-[10px] text-cyber-textMuted uppercase mb-1">Port</label>
-                    <input 
-                      type="number" 
-                      value={newPacket.port}
-                      onChange={e => setNewPacket(prev => ({ ...prev, port: Number(e.target.value) }))}
-                      className="w-full bg-[#030408]/65 border border-cyber-border/80 p-2 rounded text-cyber-text focus:outline-none focus:border-cyber-emerald transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] text-cyber-textMuted uppercase mb-1">Protocol</label>
-                    <select 
-                      value={newPacket.protocol} 
-                      onChange={e => setNewPacket(prev => ({ ...prev, protocol: e.target.value }))}
-                      className="w-full bg-[#030408]/65 border border-cyber-border/80 p-2 rounded text-cyber-text focus:outline-none focus:border-cyber-emerald transition-all cursor-pointer"
-                    >
-                      <option value="TCP">TCP</option>
-                      <option value="UDP">UDP</option>
-                      <option value="HTTP">HTTP</option>
-                      <option value="ANY">ANY</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] text-cyber-textMuted uppercase mb-1">Size (B)</label>
-                    <input 
-                      type="number" 
-                      value={newPacket.size}
-                      onChange={e => setNewPacket(prev => ({ ...prev, size: Number(e.target.value) }))}
-                      className="w-full bg-[#030408]/65 border border-cyber-border/80 p-2 rounded text-cyber-text focus:outline-none focus:border-cyber-emerald transition-all"
-                    />
-                  </div>
-                </div>
-
-                <button 
-                  type="submit" 
-                  title="Queue a new packet for firewall processing"
-                  className="w-full mt-2.5 py-2 rounded-lg bg-cyber-emerald/10 hover:bg-cyber-emerald/25 border border-cyber-emerald/35 text-cyber-emerald font-bold transition-all flex items-center justify-center gap-1.5 shadow"
-                >
-                  <Plus className="w-4 h-4" /> Push to Circular Queue
-                </button>
-              </form>
-            </div>
-
-            {/* LOG SEARCH BINARY SEARCH */}
-            <div className="glass-panel p-5 rounded-2xl">
-              <h2 className="text-xs font-bold font-mono tracking-wider text-cyber-amber flex items-center gap-2 mb-4 uppercase">
-                <Search className="w-4 h-4 text-cyber-amber" /> BINARY SEARCH LOGS
-              </h2>
-              <form onSubmit={handleSearchLogs} className="space-y-3 font-mono text-xs">
-                <div>
-                  <label className="block text-[10px] text-cyber-textMuted uppercase mb-1">Search Source IP (Exact)</label>
-                  <div className="flex gap-2">
-                    <input 
-                      type="text" 
-                      value={searchIP}
-                      onChange={e => setSearchIP(e.target.value)}
-                      placeholder="e.g. 192.168.1.10"
-                      className="flex-1 bg-[#030408]/65 border border-cyber-border/80 p-2 rounded text-cyber-text focus:outline-none focus:border-cyber-amber focus:ring-1 focus:ring-cyber-amber/25 transition-all"
-                    />
-                    <button 
-                      type="submit" 
-                      title="Search logs by source IP address"
-                      className="px-4 py-2 bg-cyber-amber/10 border border-cyber-amber/35 hover:bg-cyber-amber/25 text-cyber-amber font-bold rounded-lg transition-all flex items-center gap-1 shadow"
-                    >
-                      <Search className="w-3.5 h-3.5" /> Run
-                    </button>
-                  </div>
-                </div>
-              </form>
-
-              {/* SEARCH RESULTS DISPLAY */}
-              {hasSearched && (
-                <div className="mt-4 border-t border-cyber-border/60 pt-3 space-y-2 max-h-[200px] overflow-y-auto">
-                  <h4 className="text-[10px] font-bold font-mono text-cyber-textMuted uppercase flex justify-between">
-                    <span>Search Results ({searchResults.length}):</span>
-                    <button onClick={() => { setHasSearched(false); setSearchIP(''); }} className="text-cyber-rose">Clear</button>
-                  </h4>
-                  {searchResults.length === 0 ? (
-                    <p className="text-xs text-cyber-textMuted font-mono italic">No logs found for this IP.</p>
-                  ) : (
-                    searchResults.map((log, idx) => (
-                      <div key={`search-${idx}`} className="bg-cyber-darker p-2 rounded border border-cyber-border font-mono text-[11px] flex justify-between items-center">
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className={log.action === "BLOCKED" ? "text-cyber-rose" : "text-cyber-emerald"}>●</span>
-                            <span>{log.sourceIP}</span>
-                            <span className="text-cyber-textMuted">→</span>
-                            <span className="text-cyber-cyan">Port {log.port}</span>
-                          </div>
-                          <div className="text-[9px] text-cyber-textMuted mt-0.5">{log.timestamp}</div>
-                        </div>
-                        <span className="text-cyber-textMuted font-bold">{log.ruleID}</span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              )}
-            </div>
-
-          </div>
-        </div>
-
-          {/* MINI TRAFFIC CANVAS - ALWAYS VISIBLE AND STICKY */}
-          {!sidebarCollapsed && (
-            <div className="sticky top-0 z-20 border-b border-cyber-border/40 bg-[#070913]/95 p-3 flex-shrink-0 relative overflow-hidden backdrop-blur-sm">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-cyber-cyan/5 rounded-full blur-2xl pointer-events-none"></div>
               <div className="relative z-10">
                 <TrafficNetworkCanvas lastTriggerPkt={lastTriggerPkt} compact />
               </div>
             </div>
-          )}
-        </aside>
-        {/* ═══ END LEFT SIDEBAR ═══ */}
 
-        {/* ═══════════ RIGHT: VISUALIZATION PANEL ═══════════ */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+            {/* SCROLLABLE SIDEBAR SECTION */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-5 scrollbar-thin">
 
-          {/* STEPPER PLAYBACK CONTROLLER */}
-          {isStepperActive && stepperSteps.length > 0 && createPortal(
-            <div className="fixed top-24 left-1/2 transform -translate-x-1/2 w-[95%] max-w-5xl z-[9999] bg-[#050b14]/95 backdrop-blur-xl border border-cyber-cyan/50 rounded-2xl px-5 py-4 shadow-[0_10px_40px_rgba(6,182,212,0.25)] overflow-hidden font-mono text-xs space-y-3 animate-fade-in">
-              <div 
-                className="absolute top-0 left-0 h-1 bg-cyber-cyan transition-all duration-300" 
-                style={{ width: `${((stepperIndex + 1) / stepperSteps.length) * 100}%` }}
-              ></div>
-              
-              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
-                <div className="flex-1 space-y-1 w-full md:w-auto">
-                  <div className="flex justify-between items-center text-[10px] text-cyber-cyan font-bold uppercase tracking-wider">
-                    <span>Visual Simulation Active ({stepperSteps[stepperIndex].tab.toUpperCase()} Area)</span>
-                    <span>Step {stepperIndex + 1} of {stepperSteps.length}</span>
+              {/* QUICK PLAYER CONTROLLER CARD */}
+              <div className="rounded-xl overflow-hidden border border-indigo-500/15" style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(15,23,42,0.95) 100%)' }}>
+                <div className="px-4 py-3 flex items-center justify-between border-b border-indigo-500/10">
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-5 rounded-full bg-indigo-500/60"></div>
+                    <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Engine Control</span>
                   </div>
-                  <p className="text-cyber-text text-sm font-semibold leading-relaxed">
-                    {simpleMode ? stepperSteps[stepperIndex].simpleExplanation : stepperSteps[stepperIndex].message}
-                  </p>
+                  <span className="flex items-center gap-1.5 font-mono text-[9px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ONLINE
+                  </span>
                 </div>
-                <div className="flex items-center gap-3 bg-cyber-darker border border-cyber-border/60 px-3 py-1.5 rounded-lg flex-shrink-0">
-                  <span className="text-[9px] text-cyber-textMuted font-bold uppercase tracking-wider">Analogy Mode</span>
-                  <button
-                    onClick={() => setSimpleMode(!simpleMode)}
-                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${simpleMode ? 'bg-cyber-cyan' : 'bg-cyber-border'}`}
-                  >
-                    <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-cyber-card transition-transform ${simpleMode ? 'translate-x-4.5' : 'translate-x-1'}`} />
+                <div className="p-3 grid grid-cols-2 gap-2">
+                  <button onClick={handleLoadDefaults} title="Load standard rules and packages" className="py-2 px-3 rounded-lg bg-slate-950/60 border border-slate-800/80 text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:border-slate-700 hover:text-white transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer">
+                    <RefreshCw className="w-3.5 h-3.5" /> Defaults
+                  </button>
+                  <button onClick={handleStepProcess} title="Inspect next packet in circular queue" className="py-2 px-3 rounded-lg bg-indigo-500/10 border border-indigo-500/25 text-xs font-semibold text-indigo-400 hover:bg-indigo-500/20 hover:border-indigo-500/40 transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer">
+                    <Play className="w-3.5 h-3.5" /> Step Pkt
+                  </button>
+                  <button onClick={handleAnimateProcessPacket} title="Play visual stepper trace of algorithms" className="py-2 px-3 rounded-lg bg-violet-500/10 border border-violet-500/25 text-xs font-semibold text-violet-400 hover:bg-violet-500/20 hover:border-violet-500/40 transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer">
+                    <Activity className="w-3.5 h-3.5" /> Animate
+                  </button>
+                  <button onClick={handleProcessAll} title="Inspect entire queue instantly" className="py-2 px-3 rounded-lg text-xs font-bold text-white transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer hover:brightness-110" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 2px 12px rgba(99,102,241,0.25)' }}>
+                    <PlayCircle className="w-3.5 h-3.5" /> Process All
+                  </button>
+                  <button onClick={handleReset} title="Clear queue, blocks, and rules" className="col-span-2 py-2 rounded-lg bg-rose-500/8 border border-rose-500/20 text-xs font-semibold text-rose-400 hover:bg-rose-500/15 hover:border-rose-500/35 transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer">
+                    <Trash2 className="w-3.5 h-3.5" /> Reset Firewall
                   </button>
                 </div>
               </div>
 
-              {/* Pipeline stages */}
-              <div className="flex flex-wrap justify-between items-center text-center font-mono text-[9px] gap-1.5">
+              {/* DYNAMIC PIPELINE VERDICT FEEDBACK CARD */}
+              {stepResult && (
+                <div className={`rounded-xl border overflow-hidden animate-fade-in relative ${stepResult.action === "BLOCKED" ? 'border-rose-500/30 bg-rose-500/[0.04]' : 'border-emerald-500/30 bg-emerald-500/[0.04]'}`}>
+                  {/* Top gradient accent bar */}
+                  <div className={`h-0.5 w-full ${stepResult.action === "BLOCKED" ? 'bg-rose-500' : 'bg-emerald-500'}`} style={{ boxShadow: stepResult.action === 'BLOCKED' ? '0 0 12px rgba(244,63,94,0.5)' : '0 0 12px rgba(16,185,129,0.5)' }}></div>
+                  <div className="p-3.5">
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2 h-2 rounded-full ${stepResult.action === "BLOCKED" ? 'bg-rose-400' : 'bg-emerald-400'} animate-pulse`}></span>
+                        <span className={`text-[10px] font-bold tracking-widest uppercase ${stepResult.action === "BLOCKED" ? 'text-rose-400' : 'text-emerald-400'}`}>
+                          {stepResult.action}
+                        </span>
+                      </div>
+                      <button onClick={() => setStepResult(null)} className="text-slate-600 hover:text-slate-300 transition">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                    <div className="space-y-1.5 font-mono text-[11px]">
+                      {[
+                        { label: 'Source', val: stepResult.packet.sourceIP },
+                        { label: 'Dest', val: stepResult.packet.destIP },
+                        { label: 'Port (Proto)', val: `${stepResult.packet.port} (${stepResult.packet.protocol})` },
+                        { label: 'Matched Rule', val: stepResult.ruleID, highlight: true },
+                        { label: 'Priority', val: String(stepResult.priority) },
+                      ].map(row => (
+                        <div key={row.label} className="flex justify-between items-center">
+                          <span className="text-slate-500">{row.label}</span>
+                          <span className={`font-semibold ${row.highlight ? 'text-indigo-400' : 'text-slate-200'}`}>{row.val}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="text-[9px] text-slate-600 border-t border-slate-800/60 mt-2.5 pt-2 text-center">
+                      Resolved via {stepResult.checkStep}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* DOCKET CARD 1: ADD RULE FORM */}
+              <div className="bg-slate-900/30 border border-slate-800/60 rounded-xl overflow-hidden">
+                <div className="px-4 py-2.5 border-b border-slate-800/60 flex items-center gap-2" style={{ background: 'linear-gradient(90deg, rgba(99,102,241,0.06) 0%, transparent 100%)' }}>
+                  <div className="w-1 h-4 rounded-full bg-indigo-500"></div>
+                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Register Firewall Rule</h3>
+                </div>
+                <div className="p-4">
+                <form onSubmit={handleAnimateAddRule} className="space-y-3 font-mono text-[11px]">
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-[9px] text-slate-400 uppercase font-sans mb-1 font-semibold">Rule ID</label>
+                      <input 
+                        type="text" 
+                        value={newRule.ruleID}
+                        onChange={e => setNewRule(prev => ({ ...prev, ruleID: e.target.value }))}
+                        className="w-full bg-slate-950/60 border border-slate-800 p-2 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 transition"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[9px] text-slate-400 uppercase font-sans mb-1 font-semibold">Target IP</label>
+                      <input 
+                        type="text" 
+                        value={newRule.targetIP}
+                        onChange={e => setNewRule(prev => ({ ...prev, targetIP: e.target.value }))}
+                        className="w-full bg-slate-950/60 border border-slate-800 p-2 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 transition"
+                        placeholder="192.168.1.100"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label className="block text-[9px] text-slate-400 uppercase font-sans mb-1 font-semibold">Action</label>
+                      <select 
+                        value={newRule.action} 
+                        onChange={e => setNewRule(prev => ({ ...prev, action: e.target.value as 'BLOCK' | 'ALLOW' }))}
+                        className="w-full bg-slate-950/60 border border-slate-800 p-2 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500 transition cursor-pointer"
+                      >
+                        <option value="BLOCK">BLOCK</option>
+                        <option value="ALLOW">ALLOW</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[9px] text-slate-400 uppercase font-sans mb-1 font-semibold">Priority</label>
+                      <input 
+                        type="number" 
+                        min="1" 
+                        max="10" 
+                        value={newRule.priority}
+                        onChange={e => setNewRule(prev => ({ ...prev, priority: Number(e.target.value) }))}
+                        className="w-full bg-slate-950/60 border border-slate-800 p-2 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500 transition"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[9px] text-slate-400 uppercase font-sans mb-1 font-semibold">Protocol</label>
+                      <select 
+                        value={newRule.protocol} 
+                        onChange={e => setNewRule(prev => ({ ...prev, protocol: e.target.value }))}
+                        className="w-full bg-slate-950/60 border border-slate-800 p-2 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500 transition cursor-pointer"
+                      >
+                        <option value="ANY">ANY</option>
+                        <option value="TCP">TCP</option>
+                        <option value="UDP">UDP</option>
+                        <option value="HTTP">HTTP</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    title="Insert rule into Hash Table & Heap Queue"
+                    className="w-full mt-2 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-sans font-semibold transition flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-500/10 cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" /> Insert to Table & Heap
+                  </button>
+                </form>
+                </div>
+              </div>
+
+              {/* DOCKET CARD 2: MANUALLY PUSH PACKETS */}
+              <div className="bg-slate-900/40 border border-slate-800 rounded-xl overflow-hidden">
+                <div className="px-4 py-3 border-b border-slate-800 flex items-center gap-2" style={{ background: 'linear-gradient(90deg, rgba(16,185,129,0.06) 0%, transparent 100%)' }}>
+                  <div className="w-1 h-4 rounded-full bg-emerald-500"></div>
+                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Inject Manual Packet</h3>
+                </div>
+                <div className="p-4">
+                <form onSubmit={handleAddPacket} className="space-y-3 font-mono text-[11px]">
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-[9px] text-slate-400 uppercase font-sans mb-1 font-semibold">Source IP</label>
+                      <input 
+                        type="text" 
+                        value={newPacket.sourceIP}
+                        onChange={e => setNewPacket(prev => ({ ...prev, sourceIP: e.target.value }))}
+                        className="w-full bg-slate-950/60 border border-slate-800 p-2 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 transition"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[9px] text-slate-400 uppercase font-sans mb-1 font-semibold">Dest IP</label>
+                      <input 
+                        type="text" 
+                        value={newPacket.destIP}
+                        onChange={e => setNewPacket(prev => ({ ...prev, destIP: e.target.value }))}
+                        className="w-full bg-slate-950/60 border border-slate-800 p-2 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 transition"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label className="block text-[9px] text-slate-400 uppercase font-sans mb-1 font-semibold">Port</label>
+                      <input 
+                        type="number" 
+                        value={newPacket.port}
+                        onChange={e => setNewPacket(prev => ({ ...prev, port: Number(e.target.value) }))}
+                        className="w-full bg-slate-950/60 border border-slate-800 p-2 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 transition"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[9px] text-slate-400 uppercase font-sans mb-1 font-semibold">Protocol</label>
+                      <select 
+                        value={newPacket.protocol} 
+                        onChange={e => setNewPacket(prev => ({ ...prev, protocol: e.target.value }))}
+                        className="w-full bg-slate-950/60 border border-slate-800 p-2 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 transition cursor-pointer"
+                      >
+                        <option value="TCP">TCP</option>
+                        <option value="UDP">UDP</option>
+                        <option value="HTTP">HTTP</option>
+                        <option value="ANY">ANY</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[9px] text-slate-400 uppercase font-sans mb-1 font-semibold">Size (B)</label>
+                      <input 
+                        type="number" 
+                        value={newPacket.size}
+                        onChange={e => setNewPacket(prev => ({ ...prev, size: Number(e.target.value) }))}
+                        className="w-full bg-slate-950/60 border border-slate-800 p-2 rounded-lg text-slate-200 focus:outline-none focus:border-emerald-500 transition"
+                      />
+                    </div>
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    title="Insert packet to FIFO queue buffer"
+                    className="w-full mt-2 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-sans font-semibold transition flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/10 cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" /> Push to Circular Queue
+                  </button>
+                  </form>
+                </div>
+              </div>
+
+              {/* DOCKET CARD 3: LOGS BINARY SEARCH */}
+              <div className="bg-slate-900/30 border border-slate-800/60 rounded-xl overflow-hidden">
+                <div className="px-4 py-2.5 border-b border-slate-800/60 flex items-center gap-2" style={{ background: 'linear-gradient(90deg, rgba(245,158,11,0.06) 0%, transparent 100%)' }}>
+                  <div className="w-1 h-4 rounded-full bg-amber-500"></div>
+                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-amber-400">Binary Search Logs</h3>
+                </div>
+                <div className="p-4">
+                <form onSubmit={handleSearchLogs} className="space-y-3 font-mono text-[11px]">
+                  <div>
+                    <label className="block text-[9px] text-slate-400 uppercase font-sans mb-1 font-semibold">Source IP (Exact)</label>
+                    <div className="flex gap-2">
+                      <input 
+                        type="text" 
+                        value={searchIP}
+                        onChange={e => setSearchIP(e.target.value)}
+                        placeholder="e.g. 192.168.1.10"
+                        className="flex-1 bg-slate-950/60 border border-slate-800 p-2 rounded-lg text-slate-200 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/20 transition"
+                      />
+                      <button 
+                        type="submit" 
+                        title="Execute binary search on logs"
+                        className="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-sans font-bold rounded-lg transition flex items-center gap-1 shadow cursor-pointer"
+                      >
+                        <Search className="w-3.5 h-3.5" /> Search
+                      </button>
+                    </div>
+                  </div>
+                </form>
+
+                {/* Search outcomes rendered inside sidebar */}
+                {hasSearched && (
+                  <div className="mt-3.5 border-t border-slate-800 pt-3.5 space-y-2.5 max-h-[200px] overflow-y-auto pr-1">
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex justify-between">
+                      <span>Matches ({searchResults.length}):</span>
+                      <button onClick={() => { setHasSearched(false); setSearchIP(''); }} className="text-rose-400 hover:text-rose-300 font-sans font-semibold">Clear</button>
+                    </h4>
+                    {searchResults.length === 0 ? (
+                      <p className="text-xs text-slate-400 italic">No logs matched this query.</p>
+                    ) : (
+                      searchResults.map((log, idx) => (
+                        <div key={`search-${idx}`} className="bg-slate-900 border border-slate-800 p-2.5 rounded-lg font-mono text-[10px] flex justify-between items-center shadow-sm">
+                          <div>
+                            <div className="flex items-center gap-1.5 font-semibold text-slate-200">
+                              <span className={log.action === "BLOCKED" ? "text-rose-500" : "text-emerald-500"}>●</span>
+                              <span>{log.sourceIP}</span>
+                            </div>
+                            <div className="text-[8.5px] text-slate-400 mt-1">Port {log.port} ({log.protocol}) • {log.timestamp.split(' ')[1]}</div>
+                          </div>
+                          <span className="px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 font-bold text-[9px]">{log.ruleID}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </aside>
+
+        {/* ═══════════ MAIN VISUALIZATION STAGE (RIGHT) ═══════════ */}
+        <div className="flex-1 flex flex-col overflow-hidden bg-[#090d16] relative">
+
+          {/* DYNAMIC BACKING ALGORITHM STEPPER PANEL */}
+          {isStepperActive && stepperSteps.length > 0 && createPortal(
+            <div className="fixed top-16 left-1/2 transform -translate-x-1/2 w-[92%] max-w-5xl z-[999] animate-fade-in flex flex-col font-sans text-xs" style={{ background: 'rgba(9,13,22,0.96)', backdropFilter: 'blur(24px)', border: '1px solid rgba(99,102,241,0.25)', borderRadius: '16px', boxShadow: '0 20px 60px -10px rgba(0,0,0,0.8), 0 0 0 1px rgba(99,102,241,0.1), 0 0 40px rgba(99,102,241,0.08)', padding: '0' }}>
+              {/* Progress bar - gradient */}
+              <div className="relative h-0.5 w-full rounded-t-[16px] overflow-hidden bg-slate-800/60">
+                <div 
+                  className="absolute top-0 left-0 h-full transition-all duration-500 ease-out" 
+                  style={{ width: `${((stepperIndex + 1) / stepperSteps.length) * 100}%`, background: 'linear-gradient(90deg, #6366f1, #8b5cf6, #06b6d4)' }}
+                ></div>
+              </div>
+              <div className="px-5 py-4 flex flex-col gap-3">
+              
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
+                <div className="flex-1 space-y-1">
+                  <div className="flex items-center gap-2 text-[10px] text-indigo-400 font-bold uppercase tracking-wider">
+                    <span>Algorithm Debug Stage ({stepperSteps[stepperIndex].tab.toUpperCase()})</span>
+                    <span className="text-slate-800">•</span>
+                    <span>Step {stepperIndex + 1} / {stepperSteps.length}</span>
+                  </div>
+                  <p className="text-white text-sm font-semibold leading-relaxed tracking-tight">
+                    {simpleMode ? stepperSteps[stepperIndex].simpleExplanation : stepperSteps[stepperIndex].message}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2.5 bg-slate-900/60 border border-slate-800/80 px-3 py-1.5 rounded-xl flex-shrink-0">
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Analogy View</span>
+                  <button
+                    onClick={() => setSimpleMode(!simpleMode)}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${simpleMode ? 'bg-indigo-600' : 'bg-slate-700'}`}
+                  >
+                    <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${simpleMode ? 'translate-x-4.5' : 'translate-x-1'}`} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Segmented Pipeline Stages */}
+              <div className="grid grid-cols-4 text-center font-mono text-[9px] gap-2 pt-1">
                 {[
-                  { label: '1. Queue Mailbox', tab: 'queue', desc: 'FIFO Buffer' },
-                  { label: '2. Hash Check', tab: 'hash', desc: 'Fast Lookup' },
-                  { label: '3. Blacklist BST', tab: 'bst', desc: 'Tree Search' },
-                  { label: '4. Decision Log', tab: 'logs', desc: 'Record' }
-                ].map((stage, i) => {
+                  { label: '1. Conveyor Queue', tab: 'queue', desc: 'FIFO Buffer' },
+                  { label: '2. Hash Directory', tab: 'hash', desc: 'Bucket Index' },
+                  { label: '3. Blacklist BST', tab: 'bst', desc: 'Range Search' },
+                  { label: '4. Logging Registry', tab: 'logs', desc: 'Commit Record' }
+                ].map((stage) => {
                   const stepTab = stepperSteps[stepperIndex].tab;
                   const isCurrent = stepTab === stage.tab;
                   let isActive = false;
@@ -1893,166 +1921,164 @@ export default function App() {
                   if (stage.tab === 'bst' && (stepTab === 'bst' || stepTab === 'logs')) isActive = true;
                   if (stage.tab === 'logs' && stepTab === 'logs') isActive = true;
                   return (
-                    <React.Fragment key={stage.label}>
-                      <div className={`flex-1 min-w-[80px] p-1.5 rounded border transition-all duration-300 ${isCurrent ? 'bg-cyber-cyan/15 border-cyber-cyan text-cyber-cyan shadow-[0_0_8px_rgba(6,182,212,0.2)] font-bold' : isActive ? 'bg-cyber-border/20 border-cyber-border/40 text-cyber-text' : 'border-transparent text-cyber-textMuted/30'}`}>
-                        <div className="uppercase tracking-wider font-semibold text-[8px]">{stage.label}</div>
-                        <div className="text-[7px] opacity-70">{stage.desc}</div>
-                      </div>
-                      {i < 3 && <span className="text-cyber-border/40 hidden md:inline">➔</span>}
-                    </React.Fragment>
+                    <div 
+                      key={stage.label}
+                      className={`p-2 rounded-lg border transition-all duration-300 ${isCurrent ? 'bg-indigo-600/20 border-indigo-500 text-indigo-300 font-bold shadow-indigo-glow' : isActive ? 'bg-slate-900 border-slate-800 text-slate-300' : 'border-transparent text-slate-600'}`}
+                    >
+                      <div className="uppercase tracking-wider font-semibold text-[8px]">{stage.label}</div>
+                      <div className="text-[7.5px] opacity-70 mt-0.5">{stage.desc}</div>
+                    </div>
                   );
                 })}
               </div>
 
-              <div className="flex flex-row justify-between items-center gap-3">
-                <div className="flex flex-wrap gap-1.5">
-                  <button onClick={() => { setStepperIndex(0); setIsStepperPlaying(false); }} disabled={stepperIndex === 0} className="px-2.5 py-1 rounded bg-cyber-border hover:bg-cyber-cardLight border border-cyber-border text-cyber-text text-[10px] font-bold disabled:opacity-40 transition">Reset</button>
-                  <button onClick={() => { setStepperIndex(prev => Math.max(0, prev - 1)); setIsStepperPlaying(false); }} disabled={stepperIndex === 0} className="px-2.5 py-1 rounded bg-cyber-border hover:bg-cyber-cardLight border border-cyber-border text-cyber-text text-[10px] font-bold disabled:opacity-40 transition">◀ Prev</button>
-                  <button onClick={() => setIsStepperPlaying(!isStepperPlaying)} className={`px-4 py-1 rounded font-bold text-[10px] transition ${isStepperPlaying ? 'bg-cyber-rose/20 text-cyber-rose border border-cyber-rose/40' : 'bg-cyber-cyan/20 text-cyber-cyan border border-cyber-cyan/40'}`}>{isStepperPlaying ? '⏸ Pause' : '▶ Play'}</button>
-                  <button onClick={() => { setStepperIndex(prev => Math.min(stepperSteps.length - 1, prev + 1)); setIsStepperPlaying(false); }} disabled={stepperIndex === stepperSteps.length - 1} className="px-2.5 py-1 rounded bg-cyber-border hover:bg-cyber-cardLight border border-cyber-border text-cyber-text text-[10px] font-bold disabled:opacity-40 transition">Next ▶</button>
-                  <button onClick={() => { setIsStepperActive(false); setIsStepperPlaying(false); syncState(); }} className="px-2.5 py-1 rounded bg-cyber-rose/15 hover:bg-cyber-rose/30 border border-cyber-rose/40 text-cyber-rose text-[10px] font-bold transition">✕ Exit</button>
+              {/* Player Timeline controls */}
+              <div className="flex flex-row justify-between items-center border-t border-slate-800/80 pt-2.5 mt-1 gap-4">
+                <div className="flex items-center gap-1.5">
+                  <button onClick={() => { setStepperIndex(0); setIsStepperPlaying(false); }} disabled={stepperIndex === 0} className="px-3 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-[10px] font-semibold disabled:opacity-40 transition cursor-pointer">Reset</button>
+                  <button onClick={() => { setStepperIndex(prev => Math.max(0, prev - 1)); setIsStepperPlaying(false); }} disabled={stepperIndex === 0} className="px-3 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-[10px] font-semibold disabled:opacity-40 transition cursor-pointer">◀ Prev</button>
+                  <button onClick={() => setIsStepperPlaying(!isStepperPlaying)} className={`px-4.5 py-1 rounded font-bold text-[10px] transition cursor-pointer ${isStepperPlaying ? 'bg-rose-600/20 text-rose-300 border border-rose-500/30' : 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30'}`}>{isStepperPlaying ? '⏸ Pause' : '▶ Play'}</button>
+                  <button onClick={() => { setStepperIndex(prev => Math.min(stepperSteps.length - 1, prev + 1)); setIsStepperPlaying(false); }} disabled={stepperIndex === stepperSteps.length - 1} className="px-3 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-[10px] font-semibold disabled:opacity-40 transition cursor-pointer">Next ▶</button>
+                  <button onClick={() => { setIsStepperActive(false); setIsStepperPlaying(false); syncState(); }} className="ml-2 px-3 py-1 rounded bg-rose-600/10 hover:bg-rose-600/25 border border-rose-500/30 text-rose-400 text-[10px] font-semibold transition cursor-pointer">✕ Exit Trace</button>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <span className="text-[9px] text-cyber-textMuted font-bold uppercase">{stepperSpeed}ms</span>
-                  <input type="range" min="200" max="2000" step="100" value={stepperSpeed} onChange={e => setStepperSpeed(Number(e.target.value))} className="w-24 h-1 bg-cyber-border rounded-lg appearance-none cursor-pointer accent-cyber-cyan" />
+                <div className="flex items-center gap-2">
+                  <span className="text-[9px] text-slate-400 font-mono font-bold uppercase">{stepperSpeed}ms</span>
+                  <input type="range" min="200" max="2000" step="100" value={stepperSpeed} onChange={e => setStepperSpeed(Number(e.target.value))} className="w-24 h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500" />
                 </div>
+              </div>
               </div>
             </div>, document.body
           )}
 
-          {/* TABBED VISUALIZATION */}
-          <div className="flex flex-col flex-1 overflow-hidden glass-panel rounded-none border-0 border-l-0">  
+          {/* TABBED VISUALIZATIONWORKSPACE */}
+          <div className="flex-1 flex flex-col overflow-hidden">  
             
-            {/* TABS SELECTOR */}
-            <div className="flex flex-wrap border-b border-cyber-border bg-[#030408]/45 font-mono text-xs">
-              <button 
-                onClick={() => setActiveTab('queue')}
-                className={`flex items-center gap-1.5 px-4 py-3 border-r border-cyber-border/60 font-bold transition-all cursor-pointer ${activeTab === 'queue' ? 'bg-[#0d1426]/70 text-cyber-emerald border-t-2 border-t-cyber-emerald shadow-[inset_0_2px_8px_rgba(16,185,129,0.15)] glow-text-emerald' : 'text-cyber-textMuted hover:bg-[#0d1426]/30 hover:text-cyber-text'}`}
-              >
-                <Activity className="w-4 h-4" /> Queue Buffer
-              </button>
-              <button 
-                onClick={() => setActiveTab('hash')}
-                className={`flex items-center gap-1.5 px-4 py-3 border-r border-cyber-border/60 font-bold transition-all cursor-pointer ${activeTab === 'hash' ? 'bg-[#0d1426]/70 text-cyber-cyan border-t-2 border-t-cyber-cyan shadow-[inset_0_2px_8px_rgba(6,182,212,0.15)] glow-text-cyan' : 'text-cyber-textMuted hover:bg-[#0d1426]/30 hover:text-cyber-text'}`}
-              >
-                <Database className="w-4 h-4" /> Hash Table (Rules)
-              </button>
-              <button 
-                onClick={() => setActiveTab('heap')}
-                className={`flex items-center gap-1.5 px-4 py-3 border-r border-cyber-border/60 font-bold transition-all cursor-pointer ${activeTab === 'heap' ? 'bg-[#0d1426]/70 text-cyber-rose border-t-2 border-t-cyber-rose shadow-[inset_0_2px_8px_rgba(244,63,94,0.15)] glow-text-rose' : 'text-cyber-textMuted hover:bg-[#0d1426]/30 hover:text-cyber-text'}`}
-              >
-                <Flame className="w-4 h-4" /> Max-Heap (Priorities)
-              </button>
-              <button 
-                onClick={() => setActiveTab('bst')}
-                className={`flex items-center gap-1.5 px-4 py-3 border-r border-cyber-border/60 font-bold transition-all cursor-pointer ${activeTab === 'bst' ? 'bg-[#0d1426]/70 text-cyber-cyan border-t-2 border-t-cyber-cyan shadow-[inset_0_2px_8px_rgba(6,182,212,0.15)] glow-text-cyan' : 'text-cyber-textMuted hover:bg-[#0d1426]/30 hover:text-cyber-text'}`}
-              >
-                <Network className="w-4 h-4" /> BST (Blocked IPs)
-              </button>
-              <button 
-                onClick={() => setActiveTab('logs')}
-                className={`flex items-center gap-1.5 px-4 py-3 font-bold transition-all cursor-pointer ${activeTab === 'logs' ? 'bg-[#0d1426]/70 text-cyber-amber border-t-2 border-t-cyber-amber shadow-[inset_0_2px_8px_rgba(245,158,11,0.15)]' : 'text-cyber-textMuted hover:bg-[#0d1426]/30 hover:text-cyber-text'}`}
-              >
-                <Clock className="w-4 h-4" /> Sorting & Logs
-              </button>
+            {/* LARGE TABS NAVIGATION */}
+            <div className="flex border-b border-slate-800/80 bg-[#090d16] px-5 pt-2 gap-0.5">
+              {[
+                { tabName: 'queue', label: 'Queue Buffer',   icon: <Activity className="w-3.5 h-3.5" />, activeColor: 'text-emerald-400', activeBg: 'bg-emerald-500/8', activeBorder: 'border-emerald-500', indicatorColor: 'bg-emerald-500' },
+                { tabName: 'hash',  label: 'Hash Directory', icon: <Database className="w-3.5 h-3.5" />, activeColor: 'text-indigo-400',  activeBg: 'bg-indigo-500/8',  activeBorder: 'border-indigo-500',  indicatorColor: 'bg-indigo-500' },
+                { tabName: 'heap',  label: 'Priority Heap',  icon: <Flame className="w-3.5 h-3.5" />,    activeColor: 'text-rose-400',    activeBg: 'bg-rose-500/8',    activeBorder: 'border-rose-500',    indicatorColor: 'bg-rose-500' },
+                { tabName: 'bst',   label: 'Blacklist BST',  icon: <Network className="w-3.5 h-3.5" />,  activeColor: 'text-cyan-400',    activeBg: 'bg-cyan-500/8',    activeBorder: 'border-cyan-500',    indicatorColor: 'bg-cyan-500' },
+                { tabName: 'logs',  label: 'Logs Registry',  icon: <Clock className="w-3.5 h-3.5" />,    activeColor: 'text-amber-400',   activeBg: 'bg-amber-500/8',   activeBorder: 'border-amber-500',   indicatorColor: 'bg-amber-500' }
+              ].map(t => {
+                const isSelected = activeTab === t.tabName;
+                return (
+                  <button 
+                    key={t.tabName}
+                    onClick={() => setActiveTab(t.tabName as any)}
+                    className={`relative flex items-center gap-2 px-4 py-3 font-medium text-xs transition-all duration-200 cursor-pointer rounded-t-lg ${
+                      isSelected 
+                        ? `${t.activeColor} ${t.activeBg} font-semibold` 
+                        : 'text-slate-500 hover:text-slate-300 hover:bg-slate-900/30'
+                    }`}
+                  >
+                    {t.icon}
+                    <span>{t.label}</span>
+                    {/* Active bottom indicator */}
+                    {isSelected && (
+                      <span className={`absolute bottom-0 left-2 right-2 h-0.5 rounded-t-full ${t.indicatorColor}`}></span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
 
-            {/* TAB CONTENTS */}
-            <div className={`p-6 flex-1 flex flex-col overflow-y-auto min-h-0 relative ${isStepperActive ? 'pt-32' : ''}`}>
+            {/* TAB CONTENT AREAS */}
+            <div className={`p-6 flex-1 overflow-y-auto min-h-0 relative ${isStepperActive ? 'pt-36' : ''}`}>
               
-              {/* TAB 1: PACKET QUEUE */}
+              {/* TAB 1: CONVEYOR PACKET QUEUE */}
               {activeTab === 'queue' && (
-                <div className="space-y-6 flex-1 flex flex-col">
-                  <div className="space-y-2">
+                <div className="space-y-6 animate-fade-in flex flex-col h-full">
+                  <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4 border-b border-slate-800 pb-4">
                     <div>
-                      <h3 className="text-sm font-bold font-mono text-cyber-emerald uppercase tracking-wider mb-1">Packet Processing Queue (FIFO circular array)</h3>
-                      <p className="text-xs text-cyber-textMuted font-mono">
-                        Packets arrive in circular buffer. First in, first out. Drag/slide to view indices. Next item to process is shown at index <span className="text-cyber-emerald font-bold">{fw.packetQueue.getFrontIdx()}</span>.
+                      <h3 className="text-md font-bold font-display text-white">Packet Processing queue (Circular FIFO Array)</h3>
+                      <p className="text-xs text-slate-400 font-medium mt-1">
+                        Live packets enter the circular buffer at the rear index and exit from the front index. Active inspect target: index <span className="text-emerald-400 font-bold font-mono">#{fw.packetQueue.getFrontIdx()}</span>.
                       </p>
                     </div>
 
                     {simpleMode && (
-                      <div className="bg-cyber-emerald/5 border border-cyber-emerald/30 p-3 rounded-lg flex items-start gap-2.5 font-mono text-xs">
-                        <div className="p-1.5 bg-cyber-emerald/10 rounded text-cyber-emerald font-bold flex-shrink-0">💡 Analogy</div>
-                        <div>
-                          <span className="text-cyber-text font-semibold">Circular Queue (Conveyor Belt):</span> Like a round conveyor belt of suitcases at airport luggage claim. Packets are handled in the exact order they arrive (First-In, First-Out).
-                        </div>
+                      <div className="max-w-md bg-emerald-500/5 border border-emerald-500/15 p-3 rounded-xl flex items-start gap-2.5 text-[11px] leading-relaxed">
+                        <div className="px-2 py-0.5 bg-emerald-500/10 rounded-md text-emerald-400 font-semibold flex-shrink-0">Analogy</div>
+                        <p className="text-slate-300">
+                          <strong>Conveyor Belt (FIFO):</strong> A circular queue behaves like luggage claim. Suitcases (packets) are processed one-by-one in the exact order they were loaded (First-In, First-Out).
+                        </p>
                       </div>
                     )}
                   </div>
                   
                   {renderState.packets.length === 0 ? (
-                    <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-cyber-border rounded-xl p-8 font-mono text-xs text-cyber-textMuted italic">
-                      <AlertTriangle className="w-8 h-8 text-cyber-amber mb-2" />
-                      Queue is currently empty! Add packets or load defaults above.
+                    <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-slate-800 rounded-2xl p-10 text-slate-500 font-mono text-xs italic">
+                      <AlertTriangle className="w-8 h-8 text-amber-500/50 mb-2" />
+                      Circular buffer is currently empty! Inject packets using the sidebar.
                     </div>
                   ) : (
-                    <div className="space-y-6 flex-1 flex flex-col justify-center">
+                    <div className="space-y-6 flex-grow flex flex-col justify-center">
                       
                       {/* FIFO CONVEYOR VIEW */}
-                      <div className="flex items-center justify-center p-4 bg-[#030408]/45 border border-cyber-border/70 rounded-2xl gap-2 overflow-x-auto select-none py-8">
+                      <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-5.5 flex items-center justify-start gap-3 overflow-x-auto select-none py-8 scrollbar-thin">
                         {renderState.packets.map((pkt, idx) => {
                           const isActive = renderState.highlights.activeQueueIdx !== undefined && idx === 0;
                           return (
                             <React.Fragment key={`conveyor-${idx}`}>
-                              {idx > 0 && <span className="text-cyber-border/70 font-bold">➔</span>}
-                              <div className={`flex-shrink-0 w-[140px] bg-[#0d1426]/75 border p-3.5 rounded-xl font-mono text-[10px] space-y-1 relative transition-all duration-300 shadow ${isActive ? 'border-cyber-cyan bg-cyber-cyan/15 scale-105 glow-cyan' : idx === 0 ? 'border-cyber-emerald bg-cyber-emerald/10 glow-emerald' : 'border-cyber-border/80'}`}>
+                              {idx > 0 && <span className="text-slate-800 font-bold shrink-0">➔</span>}
+                              <div className={`flex-shrink-0 w-40 bg-slate-900 border p-4.5 rounded-xl font-mono text-[11px] space-y-2 relative transition-all duration-300 shadow-lg ${isActive ? 'border-indigo-500 bg-indigo-500/5 scale-105 shadow-indigo-glow' : idx === 0 ? 'border-emerald-500 bg-emerald-500/5 shadow-emerald-glow' : 'border-slate-800'}`}>
                                 {idx === 0 && (
-                                  <span className={`absolute top-[-8px] right-2 px-1 rounded text-[7px] font-bold uppercase tracking-wider ${isActive ? 'bg-cyber-cyan text-cyber-darker' : 'bg-cyber-emerald text-cyber-darker'}`}>{isActive ? 'PROCESSING' : 'NEXT'}</span>
+                                  <span className={`absolute -top-2.5 right-3 px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider border ${isActive ? 'bg-indigo-600 text-white border-indigo-400' : 'bg-emerald-600 text-white border-emerald-400'}`}>{isActive ? 'INSPECTING' : 'NEXT'}</span>
                                 )}
-                                <div className="font-bold text-cyber-text truncate">{pkt.sourceIP}</div>
-                                <div className="text-cyber-textMuted truncate">→ {pkt.destIP}</div>
-                                <div className="text-cyber-cyan">Port: {pkt.port}</div>
-                                <div className="text-cyber-textMuted">Proto: {pkt.protocol}</div>
-                                <div className="text-cyber-textMuted">Size: {pkt.size}B</div>
+                                <div className="font-bold text-white truncate">{pkt.sourceIP}</div>
+                                <div className="text-slate-400 truncate">→ {pkt.destIP}</div>
+                                <div className="text-indigo-400">Port: {pkt.port}</div>
+                                <div className="text-slate-400 flex justify-between">
+                                  <span>{pkt.protocol}</span>
+                                  <span className="text-[10px] text-slate-500">{pkt.size} B</span>
+                                </div>
                               </div>
                             </React.Fragment>
                           );
                         })}
                       </div>
 
-                      {/* RAW CIRCULAR ARRAY VIEW */}
-                      <div className="bg-[#030408]/45 border border-cyber-border/70 rounded-2xl p-4 space-y-3">
+                      {/* RAW CIRCULAR ARRAY DIAGRAM */}
+                      <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-5 space-y-4">
                         <div className="flex justify-between items-center">
-                          <span className="text-xs font-bold font-mono text-cyber-textMuted">Circular Array Buffer Index Diagram (Cap: {MAX_PACKETS})</span>
-                          <div className="flex gap-4 font-mono text-[10px]">
-                            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 bg-cyber-emerald rounded"></span> Front ({fw.packetQueue.getFrontIdx()})</span>
-                            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 bg-blue-500 rounded"></span> Rear ({fw.packetQueue.getRearIdx()})</span>
+                          <span className="text-xs font-bold text-slate-300">Circular Memory Buffer Array (Capacity: {MAX_PACKETS})</span>
+                          <div className="flex gap-4 font-mono text-[10px] font-semibold">
+                            <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-emerald-500/10 border border-emerald-500/30 rounded-md"></span> Front ({fw.packetQueue.getFrontIdx()})</span>
+                            <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-blue-500/10 border border-blue-500/30 rounded-md"></span> Rear ({fw.packetQueue.getRearIdx()})</span>
                           </div>
                         </div>
-                        <div className="grid grid-cols-8 sm:grid-cols-12 gap-1.5 font-mono text-center">
+                        <div className="grid grid-cols-6 sm:grid-cols-12 gap-2 font-mono text-center">
                           {Array.from({ length: MAX_PACKETS }).map((_, idx) => {
                             const rawArray = fw.packetQueue.getRawArray();
                             const hasP = rawArray[idx] !== null;
                             const isFront = idx === fw.packetQueue.getFrontIdx();
                             const isRear = idx === fw.packetQueue.getRearIdx();
                             
-                            let bgClass = "bg-cyber-card/40 border-cyber-border/40 text-cyber-textMuted";
-                            if (hasP) bgClass = "bg-cyber-card border-cyber-border text-cyber-text";
-                            if (isFront) bgClass = "bg-cyber-emerald/10 border-cyber-emerald text-cyber-emerald font-bold";
-                            if (isRear) bgClass = "bg-blue-950/20 border-blue-500 text-blue-400 font-bold";
+                            let bgClass = "bg-slate-950/20 border-slate-800/60 text-slate-600";
+                            if (hasP) bgClass = "bg-slate-900 border-slate-800 text-slate-200";
+                            if (isFront) bgClass = "bg-emerald-500/10 border-emerald-500/40 text-emerald-400 font-bold";
+                            if (isRear) bgClass = "bg-indigo-500/10 border-indigo-500/40 text-indigo-400 font-bold";
                             
                             if (renderState.highlights.activeQueueIdx === idx) {
-                              bgClass = "bg-cyber-cyan/20 border-cyber-cyan text-cyber-cyan font-bold animate-pulse";
+                              bgClass = "bg-indigo-600 border-indigo-400 text-white font-bold animate-pulse";
                             }
 
                             return (
                               <div 
                                 key={`circular-${idx}`}
-                                className={`border rounded p-1 text-[9px] relative flex flex-col justify-between h-12 transition-all ${bgClass}`}
+                                className={`border rounded-xl p-1.5 text-[10px] relative flex flex-col justify-between h-14 transition-all ${bgClass}`}
                               >
-                                <span className="text-[7px] text-cyber-textMuted">#{idx}</span>
-                                <span className="font-bold truncate">{hasP ? 'PKT' : 'ø'}</span>
-                                <div className="absolute bottom-[-5px] left-1/2 transform -translate-x-1/2 flex gap-0.5">
-                                  {isFront && <span className="w-1.5 h-1.5 bg-cyber-emerald rounded-full"></span>}
-                                  {isRear && <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>}
+                                <span className="text-[8px] text-slate-500">#{idx}</span>
+                                <span className="font-bold text-xs">{hasP ? 'PKT' : 'ø'}</span>
+                                <div className="absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 flex gap-0.5">
+                                  {isFront && <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>}
+                                  {isRear && <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full"></span>}
                                 </div>
                               </div>
                             );
                           })}
-                          <div className="col-span-full text-[9px] text-cyber-textMuted text-right font-sans italic pt-1">
-                            *Showing all {MAX_PACKETS} slots of the circular queue buffer.
-                          </div>
                         </div>
                       </div>
 
@@ -2063,41 +2089,41 @@ export default function App() {
 
               {/* TAB 2: HASH TABLE */}
               {activeTab === 'hash' && (
-                <div className="space-y-6 flex-1 flex flex-col">
-                  <div className="space-y-2">
+                <div className="space-y-6 animate-fade-in flex flex-col h-full">
+                  <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4 border-b border-slate-800 pb-4">
                     <div>
-                      <h3 className="text-sm font-bold font-mono text-cyber-cyan uppercase tracking-wider mb-1">Rule Lookup Hash Table (Polynomial Chaining)</h3>
-                      <p className="text-xs text-cyber-textMuted font-mono">
-                        Rules are inserted using polynomial rolling hash `H(IP) = Σ (c_i * 31^i) % 101`. Collisions prepended to linked chains.
+                      <h3 className="text-md font-bold font-display text-white">Rule lookup Hash Directory (Polynomial Chaining)</h3>
+                      <p className="text-xs text-slate-400 font-medium mt-1">
+                        VIP IP rules are indexed instantly via a rolling character polynomial code index `H(IP) = Σ (c_i * 31^i) % 101`. Collisions resolve through linked buckets.
                       </p>
                     </div>
 
                     {simpleMode && (
-                      <div className="bg-cyber-cyan/5 border border-cyber-cyan/30 p-3 rounded-lg flex items-start gap-2.5 font-mono text-xs">
-                        <div className="p-1.5 bg-cyber-cyan/10 rounded text-cyber-cyan font-bold flex-shrink-0">💡 Analogy</div>
-                        <div>
-                          <span className="text-cyber-text font-semibold">Hash Table (VIP Filing Cabinet):</span> Like a filing cabinet with labeled folders. Instead of looking through every single rule, we calculate a label for the IP address and look *directly* into that folder. If multiple rules share the same folder, we file them one after the other in a list (Chaining).
-                        </div>
+                      <div className="max-w-md bg-indigo-500/5 border border-indigo-500/15 p-3 rounded-xl flex items-start gap-2.5 text-[11px] leading-relaxed">
+                        <div className="px-2 py-0.5 bg-indigo-500/10 rounded-md text-indigo-400 font-semibold flex-shrink-0">Analogy</div>
+                        <p className="text-slate-300">
+                          <strong>Filing Cabinet (Direct lookup):</strong> Hashing works like a set of alphabetically labeled folders. Instead of searching all files, we calculate the exact folder index for a rule IP, saving lookup time.
+                        </p>
                       </div>
                     )}
                   </div>
 
-                  {/* INTERACTIVE HASH TESTER */}
-                  <div className="bg-[#030408]/45 border border-cyber-border/70 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 font-mono text-xs">
+                  {/* INTERACTIVE COMPONENT: POLYNOMIAL BENCHMARK */}
+                  <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4 font-mono text-xs shadow-md">
                     <div className="space-y-1">
-                      <h4 className="font-bold text-cyber-cyan uppercase">Interactive Hash Calculation Tester</h4>
-                      <p className="text-cyber-textMuted text-[10px]">Enter an IP to step through the rolling polynomial hash calculation and see collision scan.</p>
+                      <h4 className="font-bold text-indigo-400 uppercase tracking-wider">Polynomial Hash Engine Step Tracker</h4>
+                      <p className="text-slate-400 text-[10px] font-sans">Type an IP below to animate calculations of intermediate keys and trace lookup bucket collision chains.</p>
                     </div>
                     <div className="flex gap-2">
                       <input
                         type="text"
                         value={testHashIP}
                         onChange={e => setTestHashIP(e.target.value)}
-                        className="bg-[#030408]/65 border border-cyber-border/80 p-2 rounded text-cyber-text font-mono text-xs focus:outline-none focus:border-cyber-cyan focus:ring-1 focus:ring-cyber-cyan/25 w-40 transition-all"
+                        className="bg-slate-950/60 border border-slate-800 p-2.5 rounded-lg text-slate-200 font-mono text-xs focus:outline-none focus:border-indigo-500 w-44 transition"
                       />
                       <button
                         onClick={() => handleAnimateHashTableSearch(testHashIP)}
-                        className="px-3 py-2 bg-cyber-cyan/10 hover:bg-cyber-cyan/25 border border-cyber-cyan/35 text-cyber-cyan font-mono font-bold rounded-lg shadow transition-all cursor-pointer"
+                        className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-sans font-semibold rounded-lg shadow-lg shadow-indigo-500/15 transition cursor-pointer"
                       >
                         Animate Hash Lookup
                       </button>
@@ -2105,47 +2131,47 @@ export default function App() {
                   </div>
                   
                   {renderState.hashBuckets.length === 0 ? (
-                    <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-cyber-border rounded-xl p-8 font-mono text-xs text-cyber-textMuted italic">
-                      No rules loaded! Load default configurations.
+                    <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-slate-800 rounded-2xl p-10 text-slate-500 font-mono text-xs italic">
+                      No lookup rules loaded in hash table. Load defaults.
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1">
                       
-                      {/* BUCKET SCROLL GRID */}
-                      <div className="bg-[#030408]/45 border border-cyber-border/70 rounded-2xl p-4 flex flex-col max-h-[400px]">
-                        <h4 className="text-xs font-bold font-mono text-cyber-cyan mb-3">Active Hash Buckets (Size: {HASH_TABLE_SIZE})</h4>
-                        <div className="flex-1 overflow-y-auto space-y-2.5 pr-2">
+                      {/* BUCKET SCROLL CONTAINER */}
+                      <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-5 flex flex-col max-h-[420px]">
+                        <h4 className="text-xs font-bold text-slate-300 mb-3.5">Registered Hash Buckets (Cap: {HASH_TABLE_SIZE})</h4>
+                        <div className="flex-grow overflow-y-auto space-y-2.5 pr-2 scrollbar-thin">
                           {renderState.hashBuckets.map((bucket) => {
                             const isBucketActive = renderState.highlights.hashBucketIdx === bucket.index;
                             return (
                               <div 
                                 key={`bucket-${bucket.index}`} 
-                                className={`bg-cyber-card border rounded p-2.5 font-mono text-xs flex items-center justify-between transition-all duration-300 ${isBucketActive ? 'border-cyber-cyan bg-cyber-cyan/10 shadow-[0_0_8px_rgba(6,182,212,0.3)] scale-[1.01]' : 'border-cyber-border'}`}
+                                className={`bg-slate-900 border rounded-xl p-3 flex items-center justify-between transition-all duration-300 ${isBucketActive ? 'border-indigo-500 bg-indigo-500/10 shadow-indigo-glow scale-[1.01]' : 'border-slate-800'}`}
                               >
                                 <div className="flex items-center gap-3">
-                                  <span className={`px-2 py-0.5 border text-[10px] rounded font-bold ${isBucketActive ? 'bg-cyber-cyan text-cyber-darker border-cyber-cyan' : 'bg-cyber-cyan/10 border-cyber-cyan/30 text-cyber-cyan'}`}>
-                                    Bucket {bucket.index}
+                                  <span className={`px-2 py-0.5 border text-[10px] rounded-lg font-mono font-bold ${isBucketActive ? 'bg-indigo-600 text-white border-indigo-400 shadow-sm' : 'bg-slate-950 border-slate-800 text-indigo-400'}`}>
+                                    Index {bucket.index}
                                   </span>
-                                  <span className="text-cyber-textMuted text-[10px]">
-                                    Chain length: {bucket.chain.length}
+                                  <span className="text-[10px] text-slate-400 font-medium">
+                                    Chains: {bucket.chain.length}
                                   </span>
                                 </div>
-                                <div className="flex items-center gap-1 overflow-x-auto max-w-[200px]">
+                                <div className="flex items-center gap-1.5 overflow-x-auto max-w-[240px] scrollbar-none">
                                   {bucket.chain.map((rule, idx) => {
                                     const isKeyChecked = renderState.highlights.hashChainKeys?.includes(rule.targetIP);
                                     const isKeyActive = renderState.highlights.hashActiveKey === rule.targetIP;
                                     
-                                    let ruleClass = rule.action === "BLOCK" ? "bg-cyber-rose/10 text-cyber-rose border border-cyber-rose/20" : "bg-cyber-emerald/10 text-cyber-emerald border border-cyber-emerald/20";
+                                    let ruleClass = rule.action === "BLOCK" ? "bg-rose-500/10 text-rose-400 border border-rose-500/20" : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
                                     if (isKeyActive) {
-                                      ruleClass = "bg-cyber-amber text-cyber-darker border border-cyber-amber font-extrabold animate-pulse scale-105";
+                                      ruleClass = "bg-amber-500 text-slate-950 border border-amber-400 font-bold animate-pulse scale-105 shadow-sm";
                                     } else if (isKeyChecked) {
-                                      ruleClass = "bg-cyber-cyan/25 text-cyber-cyan border border-cyber-cyan/40";
+                                      ruleClass = "bg-indigo-600 text-white border border-indigo-400 shadow-sm";
                                     }
 
                                     return (
                                       <span 
                                         key={`chain-${bucket.index}-${idx}`}
-                                        className={`px-1.5 py-0.5 rounded text-[9px] font-bold transition-all ${ruleClass}`}
+                                        className={`px-2 py-0.5 rounded font-bold text-[9px] font-mono transition-all ${ruleClass}`}
                                         title={`Rule: ${rule.ruleID}\nIP: ${rule.targetIP}\nPriority: ${rule.priority}`}
                                       >
                                         {rule.ruleID}
@@ -2159,26 +2185,26 @@ export default function App() {
                         </div>
                       </div>
  
-                      {/* DETAILED ACTIVE RULES LIST */}
-                      <div className="bg-[#030408]/45 border border-cyber-border/70 rounded-2xl p-4 flex flex-col max-h-[400px]">
-                        <h4 className="text-xs font-bold font-mono text-cyber-textMuted mb-3">All Active Rules ({renderState.heapRules.length})</h4>
-                        <div className="flex-1 overflow-y-auto space-y-2 pr-2">
+                      {/* OVERVIEW ACTIVE DIRECTORY RULES */}
+                      <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-5 flex flex-col max-h-[420px]">
+                        <h4 className="text-xs font-bold text-slate-300 mb-3.5">Total Rules Registered ({renderState.heapRules.length})</h4>
+                        <div className="flex-grow overflow-y-auto space-y-2 pr-2 scrollbar-thin">
                           {renderState.heapRules.map((rule) => (
-                            <div key={`rule-list-${rule.ruleID}`} className="bg-cyber-card border border-cyber-border rounded p-2.5 font-mono text-xs flex justify-between items-center transition-all hover:bg-cyber-cardLight">
+                            <div key={`rule-list-${rule.ruleID}`} className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 flex justify-between items-center transition hover:bg-slate-800 hover:border-slate-700 shadow-sm">
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <span className="font-bold">{rule.ruleID}</span>
-                                  <span className={`px-1 text-[8px] font-bold rounded ${rule.action === "BLOCK" ? "bg-cyber-rose/10 text-cyber-rose" : "bg-cyber-emerald/10 text-cyber-emerald"}`}>
+                                  <span className="font-bold text-white text-xs">{rule.ruleID}</span>
+                                  <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full border ${rule.action === "BLOCK" ? "bg-rose-500/10 text-rose-400 border-rose-500/20" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"}`}>
                                     {rule.action}
                                   </span>
                                 </div>
-                                <div className="text-[10px] text-cyber-textMuted mt-1">IP: {rule.targetIP}</div>
-                                <div className="text-[9px] text-cyber-cyan mt-0.5">Hits: {rule.hitCount} | Proto: {rule.protocol} | Priority: {rule.priority}</div>
+                                <div className="text-[10px] text-slate-400 font-mono mt-1.5">IP: {rule.targetIP}</div>
+                                <div className="text-[9.5px] text-slate-500 mt-1 font-mono">Proto: {rule.protocol} | Priority: {rule.priority} | Hits: {rule.hitCount}</div>
                               </div>
                               <button 
                                 onClick={() => handleRemoveRule(rule.targetIP)}
-                                className="p-1 hover:text-cyber-rose text-cyber-textMuted transition"
-                                title="Remove Rule"
+                                className="p-2 rounded-lg hover:bg-rose-600/10 hover:text-rose-400 text-slate-400 transition cursor-pointer"
+                                title="Delete rule"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
@@ -2191,296 +2217,314 @@ export default function App() {
                 </div>
               )}
 
-              {/* TAB 3: MAX-HEAP */}
+              {/* TAB 3: MAX-HEAP RULE PRIORITY QUEUE */}
               {activeTab === 'heap' && (
-                <div className="space-y-6 flex-1 flex flex-col">
-                  <div className="space-y-2">
+                <div className="space-y-6 animate-fade-in flex flex-col h-full">
+                  <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4 border-b border-slate-800 pb-4">
                     <div>
-                      <h3 className="text-sm font-bold font-mono text-cyber-rose uppercase tracking-wider mb-1">Priority Rule Max-Heap (Array Index Hierarchy)</h3>
-                      <p className="text-xs text-cyber-textMuted font-mono">
-                        Rules organized by priority. Highest priority rule is always at root (index 0). Children indices calculated as `left = 2*i + 1`, `right = 2*i + 2`.
+                      <h3 className="text-md font-bold font-display text-white">Rule Priority Stack (Binary Max-Heap Array)</h3>
+                      <p className="text-xs text-slate-400 font-medium mt-1">
+                        Rules are sorted automatically by priority inside a binary tree layout mapped onto a linear array. Root node (index 0) represents maximum priority.
                       </p>
                     </div>
 
                     {simpleMode && (
-                      <div className="bg-cyber-rose/5 border border-cyber-rose/30 p-3 rounded-lg flex items-start gap-2.5 font-mono text-xs">
-                        <div className="p-1.5 bg-cyber-rose/10 rounded text-cyber-rose font-bold flex-shrink-0">💡 Analogy</div>
-                        <div>
-                          <span className="text-cyber-text font-semibold">Priority Heap (Urgency Stack):</span> Like sorting hospital patients in an emergency room by severity. The most urgent rule (highest priority) is always placed right at the top (root). When the top rule is removed or a new one is added, rules bubble up or bubble down until the most urgent rule is back on top.
-                        </div>
+                      <div className="max-w-md bg-rose-500/5 border border-rose-500/15 p-3 rounded-xl flex items-start gap-2.5 text-[11px] leading-relaxed">
+                        <div className="px-2 py-0.5 bg-rose-500/10 rounded-md text-rose-400 font-semibold flex-shrink-0">Analogy</div>
+                        <p className="text-slate-300">
+                          <strong>Emergency Room triage:</strong> The Max-Heap works like a hospital waiting list sorted by severity. The highest priority case is always at the top, and bubble-up/down processes restructure entries when priorities change.
+                        </p>
                       </div>
                     )}
                   </div>
 
-                  {/* INTERACTIVE HEAP CONTROLS */}
-                  <div className="bg-[#030408]/45 border border-cyber-border/70 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 font-mono text-xs">
+                  {/* INTERACTIVE CONTROLS: PRIORITY EXTRACTION */}
+                  <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4 font-mono text-xs shadow-md">
                     <div className="space-y-1">
-                      <h4 className="font-bold text-cyber-rose uppercase">Interactive Heap Dequeue</h4>
-                      <p className="text-cyber-textMuted text-[10px]">Pop the root of the Priority Queue Max-Heap to watch step-by-step visual heapify-down restructuring.</p>
+                      <h4 className="font-bold text-rose-400 uppercase tracking-wider">Interactive Heap Restructuring Demo</h4>
+                      <p className="text-slate-400 text-[10px] font-sans">Pop the maximum priority element from the heap to trace how nodes swap positions dynamically (Bubble-Down Heapify).</p>
                     </div>
                     <button
                       onClick={handleAnimatePopHeap}
                       disabled={renderState.heapRules.length === 0}
-                      className="px-3.5 py-2 bg-cyber-rose/10 hover:bg-cyber-rose/25 border border-cyber-rose/35 text-cyber-rose font-mono font-bold rounded-lg shadow disabled:opacity-40 transition-all cursor-pointer"
+                      className="px-4 py-2.5 bg-rose-600/15 hover:bg-rose-600/25 border border-rose-500/30 text-rose-400 font-sans font-semibold rounded-lg shadow transition-all cursor-pointer disabled:opacity-40"
                     >
-                      Animate Pop Root (Priority-Extract)
+                      Animate Pop Root (Priority Dequeue)
                     </button>
                   </div>
                   
                   {renderState.heapRules.length === 0 ? (
-                    <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-cyber-border rounded-xl p-8 font-mono text-xs text-cyber-textMuted italic">
-                      No rules loaded! Load defaults above.
+                    <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-slate-800 rounded-2xl p-10 text-slate-500 font-mono text-xs italic">
+                      Max-Heap is currently empty! Add rules using the config panel.
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1">
                       
-                      {/* TREE RENDER CONTAINER */}
-                      <div className="bg-[#030408]/45 border border-cyber-border/70 rounded-2xl p-4 flex flex-col items-center justify-center min-h-[300px]">
-                        <h4 className="text-xs font-bold font-mono text-cyber-rose self-start mb-4">Max-Heap Binary Tree Layout</h4>
-                        <div className="w-full flex justify-center overflow-x-auto overflow-y-hidden">
-                          <svg viewBox="0 0 600 280" className="w-full max-w-[600px] h-auto flex-shrink-0">
-                            {renderHeapNode(0, 300, 30, 130)}
-                          </svg>
-                        </div>
+                      {/* TREE SVG GRAPH CONTAINER */}
+                      <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-5 flex flex-col items-center justify-center min-h-[360px] relative">
+                        <span className="absolute top-4 left-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Dynamic Binary Heap Tree Graph</span>
+                        <svg className="w-full max-w-[480px] h-[280px]" viewBox="0 0 500 280">
+                          {renderHeapNode(0, 250, 30, 110)}
+                        </svg>
                       </div>
 
-                      {/* HEAP ARRAY FLAT VIEW */}
-                      <div className="bg-[#030408]/45 border border-cyber-border/70 rounded-2xl p-4 flex flex-col">
-                        <h4 className="text-xs font-bold font-mono text-cyber-textMuted mb-3">Flat Max-Heap Array Memory Representation</h4>
-                        <div className="grid grid-cols-5 gap-2 font-mono text-center overflow-y-auto max-h-[300px] pr-1">
+                      {/* FLAT ARRAY DIRECT INDEX REPRESENTATION */}
+                      <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-5 flex flex-col">
+                        <h4 className="text-xs font-bold text-slate-300 mb-3.5">Flat Heap Array Layout representation</h4>
+                        <div className="grid grid-cols-4 sm:grid-cols-6 gap-2.5 font-mono text-center">
                           {renderState.heapRules.map((rule, idx) => {
                             const isComparing = renderState.highlights.heapComparing?.includes(idx);
                             const isSwapping = renderState.highlights.heapSwapping?.includes(idx);
-                            let itemBg = idx === 0 ? 'bg-cyber-rose/10 border-cyber-rose text-cyber-rose' : 'bg-cyber-card border-cyber-border';
                             
+                            let borderClass = "border-slate-800 bg-slate-900 text-slate-300";
                             if (isSwapping) {
-                              itemBg = "bg-cyber-amber text-cyber-darker border border-cyber-amber font-bold animate-pulse";
+                              borderClass = "border-orange-500 bg-orange-600/15 text-orange-400 font-bold animate-pulse";
                             } else if (isComparing) {
-                              itemBg = "bg-cyber-cyan/20 border-cyber-cyan text-cyber-cyan font-bold";
+                              borderClass = "border-indigo-500 bg-indigo-600/15 text-indigo-400 font-bold";
                             }
 
                             return (
                               <div 
-                                key={`flat-heap-${idx}`} 
-                                className={`border rounded p-1.5 text-[10px] space-y-1 relative flex flex-col justify-between transition-all duration-300 ${itemBg}`}
+                                key={`heap-flat-${idx}`}
+                                className={`border rounded-xl p-2.5 text-xs relative flex flex-col justify-between h-15 shadow-sm transition ${borderClass}`}
                               >
-                                <span className="text-[7.5px] text-cyber-textMuted absolute top-0.5 left-1">#{idx}</span>
-                                <div className="font-bold pt-2">{rule.ruleID}</div>
-                                <div className="text-[8.5px] font-bold">Pri: {rule.priority}</div>
+                                <span className="text-[8px] text-slate-500">Idx {idx}</span>
+                                <span className="font-bold text-white">{rule.ruleID}</span>
+                                <span className="text-[9px] text-slate-400 font-medium">Pri: {rule.priority}</span>
+                                <span className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full ${rule.action === "BLOCK" ? "bg-rose-500" : "bg-emerald-500"}`}></span>
                               </div>
                             );
                           })}
                         </div>
+                        <div className="text-[10px] text-slate-500 mt-4 leading-relaxed bg-slate-950/20 p-3 rounded-lg border border-slate-800/40">
+                          <p className="font-semibold text-slate-400 mb-1 font-sans">Structural Properties:</p>
+                          <ul className="list-disc pl-4 space-y-1">
+                            <li>Parent node of index `i` is located at index `⌊(i-1)/2⌋`</li>
+                            <li>Left child is at index `2*i + 1` • Right child is at index `2*i + 2`</li>
+                          </ul>
+                        </div>
                       </div>
-
                     </div>
                   )}
                 </div>
               )}
 
-              {/* TAB 4: BST */}
+              {/* TAB 4: BST IP BLACKLIST TREE */}
               {activeTab === 'bst' && (
-                <div className="space-y-6 flex-1 flex flex-col">
-                  <div className="space-y-2">
+                <div className="space-y-6 animate-fade-in flex flex-col h-full">
+                  <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4 border-b border-slate-800 pb-4">
                     <div>
-                      <h3 className="text-sm font-bold font-mono text-cyber-cyan uppercase tracking-wider mb-1">Blocked IPs Range BST (Binary Search Tree)</h3>
-                      <p className="text-xs text-cyber-textMuted font-mono">
-                        Stores blocked rule IP addresses in sorted order. Fast `O(log n)` check if an arriving packet IP is blacklisted.
+                      <h3 className="text-md font-bold font-display text-white">Blocked IP Directory (Binary Search Tree)</h3>
+                      <p className="text-xs text-slate-400 font-medium mt-1">
+                        High-traffic IP Ranges are blocked using a Binary Search Tree (BST) sorted lexicographically. Searches run in O(log N) time complexity.
                       </p>
                     </div>
 
                     {simpleMode && (
-                      <div className="bg-cyber-cyan/5 border border-cyber-cyan/30 p-3 rounded-lg flex items-start gap-2.5 font-mono text-xs">
-                        <div className="p-1.5 bg-cyber-cyan/10 rounded text-cyber-cyan font-bold flex-shrink-0">💡 Analogy</div>
-                        <div>
-                          <span className="text-cyber-text font-semibold">Binary Search Tree (Alphabetical Phonebook):</span> Like finding a name in a phonebook by opening to the middle. If the target name is alphabetically earlier, you search only the left half; if later, only the right half. This repeatedly cuts the search area in half, making search extremely fast.
-                        </div>
+                      <div className="max-w-md bg-cyan-500/5 border border-cyan-500/15 p-3 rounded-xl flex items-start gap-2.5 text-[11px] leading-relaxed">
+                        <div className="px-2 py-0.5 bg-cyan-500/10 rounded-md text-cyan-400 font-semibold flex-shrink-0">Analogy</div>
+                        <p className="text-slate-300">
+                          <strong>Branching Directory (Sorted branches):</strong> The BST organizes sorted IP paths. At each junction node, smaller addresses branch left and larger ones branch right, skipping half the search list at each step.
+                        </p>
                       </div>
                     )}
                   </div>
 
-                  {/* INTERACTIVE BST TESTER */}
-                  <div className="bg-[#030408]/45 border border-cyber-border/70 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 font-mono text-xs">
+                  {/* INTERACTIVE COMPONENT: BST TRAVERSAL SEARCH */}
+                  <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4 font-mono text-xs shadow-md">
                     <div className="space-y-1">
-                      <h4 className="font-bold text-cyber-cyan uppercase font-mono">Interactive BST Path Tester</h4>
-                      <p className="text-cyber-textMuted text-[10px]">Enter an IP address to watch the step-by-step tree comparison path search traversal.</p>
+                      <h4 className="font-bold text-cyan-400 uppercase tracking-wider">Lexicographical BST Search Analyzer</h4>
+                      <p className="text-slate-400 text-[10px] font-sans">Type an IP address to watch how a query checks left or right branches step-by-step through the tree structure.</p>
                     </div>
                     <div className="flex gap-2">
                       <input
                         type="text"
                         value={testBSTIP}
                         onChange={e => setTestBSTIP(e.target.value)}
-                        className="bg-[#030408]/65 border border-cyber-border/80 p-2 rounded text-cyber-text font-mono text-xs focus:outline-none focus:border-cyber-cyan focus:ring-1 focus:ring-cyber-cyan/25 w-40 transition-all"
+                        className="bg-slate-950/60 border border-slate-800 p-2.5 rounded-lg text-slate-200 font-mono text-xs focus:outline-none focus:border-cyan-500 w-44 transition"
                       />
                       <button
                         onClick={() => handleAnimateBSTSearch(testBSTIP)}
-                        className="px-3 py-2 bg-cyber-cyan/10 hover:bg-cyber-cyan/25 border border-cyber-cyan/35 text-cyber-cyan font-mono font-bold rounded-lg shadow transition-all cursor-pointer"
+                        className="px-4 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-sans font-semibold rounded-lg shadow-lg shadow-cyan-500/15 transition cursor-pointer"
                       >
-                        Animate Search
+                        Animate Tree Search
                       </button>
                     </div>
                   </div>
                   
-                  {renderState.bstIPs.length === 0 ? (
-                    <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-cyber-border rounded-xl p-8 font-mono text-xs text-cyber-textMuted italic">
-                      No blocked rules are active! Insert a BLOCK rule.
+                  {bstIPs.length === 0 ? (
+                    <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-slate-800 rounded-2xl p-10 text-slate-500 font-mono text-xs italic">
+                      Blacklist IP Tree is empty! Load configurations.
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1">
                       
                       {/* TREE SVG DIAGRAM */}
-                      <div className="bg-[#030408]/45 border border-cyber-border/70 rounded-2xl p-4 flex flex-col items-center justify-center min-h-[300px]">
-                        <h4 className="text-xs font-bold font-mono text-cyber-cyan self-start mb-4">BST Block Index Visualizer</h4>
-                        <div className="w-full flex justify-center overflow-x-auto overflow-y-hidden">
-                          <svg viewBox="0 0 600 280" className="w-full max-w-[600px] h-auto flex-shrink-0">
-                            {renderBSTNode(fw.ipTree.getRoot(), 300, 30, 130)}
-                          </svg>
-                        </div>
+                      <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-5 flex flex-col items-center justify-center min-h-[360px] relative">
+                        <span className="absolute top-4 left-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Binary Tree Graph Visualization</span>
+                        <svg className="w-full max-w-[480px] h-[280px]" viewBox="0 0 500 280">
+                          {renderBSTNode(fw.ipTree.getRoot(), 250, 30, 110)}
+                        </svg>
                       </div>
 
-                      {/* IN-ORDER SORTED LIST */}
-                      <div className="bg-[#030408]/45 border border-cyber-border/70 rounded-2xl p-4 flex flex-col max-h-[300px]">
-                        <h4 className="text-xs font-bold font-mono text-cyber-cyan mb-3">Sorted IP Blocking Index (BST In-Order)</h4>
-                        <div className="flex-1 overflow-y-auto space-y-2 pr-2">
-                          {renderState.bstIPs.map((ip, idx) => {
-                            const isActiveNode = renderState.highlights.bstActiveNode === ip;
+                      {/* SORTED BLOCKLIST LOG INORDER LIST */}
+                      <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-5 flex flex-col">
+                        <h4 className="text-xs font-bold text-slate-300 mb-3.5">Sorted Blocked IPs (BST In-Order Traversal List)</h4>
+                        <div className="flex-grow overflow-y-auto space-y-2 pr-2 scrollbar-thin max-h-[260px]">
+                          {bstIPs.map((ip, idx) => {
+                            const isActive = renderState.highlights.bstActiveNode === ip;
                             const isPath = renderState.highlights.bstPath?.includes(ip);
-                            let ipClass = "bg-cyber-card border-cyber-border";
                             
-                            if (isActiveNode) {
-                              ipClass = "bg-cyber-amber text-cyber-darker border border-cyber-amber font-extrabold animate-pulse scale-[1.02] shadow-[0_0_6px_rgba(245,158,11,0.4)]";
+                            let nodeStyle = "bg-slate-900 border-slate-800 text-slate-300";
+                            if (isActive) {
+                              nodeStyle = "bg-orange-600/10 border-orange-500 text-orange-400 font-semibold animate-pulse";
                             } else if (isPath) {
-                              ipClass = "bg-cyber-cyan/20 border-cyber-cyan text-cyber-cyan";
+                              nodeStyle = "bg-indigo-600/10 border-indigo-500 text-indigo-400 font-semibold";
                             }
 
                             return (
-                              <div key={`bst-ip-${idx}`} className={`rounded p-2 font-mono text-xs flex justify-between items-center transition-all ${ipClass}`}>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-[10px] text-cyber-textMuted">#{idx + 1}</span>
-                                  <span className={`font-bold ${isActiveNode ? 'text-cyber-darker' : isPath ? 'text-cyber-cyan' : 'text-cyber-rose'}`}>{ip}</span>
-                                </div>
-                                <span className={`text-[10px] ${isActiveNode ? 'text-cyber-darker font-bold' : 'text-cyber-textMuted'}`}>Lexicographical sort</span>
+                              <div key={`bst-list-${idx}`} className={`border rounded-xl p-3 flex justify-between items-center font-mono text-xs shadow-sm transition ${nodeStyle}`}>
+                                <span>{ip}</span>
+                                <span className="text-[10px] text-slate-500">Node #{idx + 1}</span>
                               </div>
                             );
                           })}
                         </div>
+                        <div className="text-[10px] text-slate-500 mt-4 bg-slate-950/20 p-3 rounded-lg border border-slate-800/40">
+                          <p className="font-semibold text-slate-400 mb-1 font-sans">Traversal Property:</p>
+                          <p>BST In-Order Traversal checks elements recursively (Left Child ➔ Parent ➔ Right Child), returning a perfectly sorted set of IP addresses in ascending order.</p>
+                        </div>
                       </div>
-
                     </div>
                   )}
                 </div>
               )}
 
-              {/* TAB 5: LOGS & SORTING */}
+              {/* TAB 5: SORTING BENCHMARKS & LOGS */}
               {activeTab === 'logs' && (
-                <div className="space-y-6 flex-1 flex flex-col">
-                  <div className="space-y-2">
+                <div className="space-y-6 animate-fade-in flex flex-col h-full">
+                  <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4 border-b border-slate-800 pb-4">
                     <div>
-                      <h3 className="text-sm font-bold font-mono text-cyber-amber uppercase tracking-wider mb-1">Logs Manager & Sorting Visualizer</h3>
-                      <p className="text-xs text-cyber-textMuted font-mono">
-                        Compare Quick Sort vs Merge Sort on live firewall log data. Watch the sorting algorithm animate step-by-step.
+                      <h3 className="text-md font-bold font-display text-white">Firewall Inspection Logs & Sorting Benchmark</h3>
+                      <p className="text-xs text-slate-400 font-medium mt-1">
+                        View historical log audits. Benchmark custom C++ ported algorithms: Quick Sort (on timestamps) and Merge Sort (on severity levels).
                       </p>
                     </div>
+
                     {simpleMode && (
-                      <div className="bg-cyber-amber/5 border border-cyber-amber/30 p-3 rounded-lg flex items-start gap-2.5 font-mono text-xs">
-                        <div className="p-1.5 bg-cyber-amber/10 rounded text-cyber-amber font-bold flex-shrink-0">💡 Analogy</div>
-                        <div>
-                          <span className="text-cyber-text font-semibold">Sorting (Organizing Filing Cards):</span>
-                          <ul className="list-disc list-inside mt-1 space-y-1 pl-1">
-                            <li><span className="font-semibold text-cyber-cyan">Quick Sort (Filing by Pivot):</span> Pick a card as a "pivot", put all earlier cards to the left and all later cards to the right, then repeat this for each side.</li>
-                            <li><span className="font-semibold text-cyber-amber">Merge Sort (Divide & Combine):</span> Split the deck of cards in halves until you have individual cards, then merge them back together in perfect sorted order.</li>
-                          </ul>
-                        </div>
+                      <div className="max-w-md bg-amber-500/5 border border-amber-500/15 p-3 rounded-xl flex items-start gap-2.5 text-[11px] leading-relaxed">
+                        <div className="px-2 py-0.5 bg-amber-500/10 rounded-md text-amber-500 font-semibold flex-shrink-0">Analogy</div>
+                        <p className="text-slate-300">
+                          <strong>File Room Organizer:</strong> Sorting processes log registers. Quick Sort uses a pivot point to swap elements, while Merge Sort splits logs in half and combines them in priority order.
+                        </p>
                       </div>
                     )}
                   </div>
 
-                  {/* SORT CONTROLS & METRICS */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-[#030408]/45 border border-cyber-border/70 p-4 rounded-2xl">
-                    <div className="space-y-3">
-                      <h4 className="text-xs font-bold font-mono text-cyber-textMuted uppercase">Sort Operations</h4>
-                      <div className="flex flex-wrap gap-2.5">
-                        <button 
-                          onClick={() => handleSortLogs('time')}
-                          className="px-3.5 py-1.5 rounded-lg bg-cyber-card border border-cyber-border text-[11px] font-mono font-bold text-cyber-text hover:bg-[#0d1426]/60 hover:text-cyber-cyan hover:border-cyber-cyan/50 transition-all flex items-center gap-1.5 cursor-pointer"
-                        >
-                          <Clock className="w-3.5 h-3.5" /> Instant Quick Sort
-                        </button>
-                        <button 
-                          onClick={() => handleAnimateSort('time')}
-                          className="px-3.5 py-1.5 rounded-lg bg-cyber-cyan/10 hover:bg-cyber-cyan/25 border border-cyber-cyan/35 text-cyber-cyan font-mono font-bold text-[11px] transition-all flex items-center gap-1.5 cursor-pointer"
-                        >
-                          <Activity className="w-3.5 h-3.5 text-cyber-cyan animate-pulse" /> Animate Quick Sort
-                        </button>
-                      </div>
-                      <div className="flex flex-wrap gap-2.5">
-                        <button 
-                          onClick={() => handleSortLogs('severity')}
-                          className="px-3.5 py-1.5 rounded-lg bg-cyber-card border border-cyber-border text-[11px] font-mono font-bold text-cyber-text hover:bg-[#0d1426]/60 hover:text-cyber-amber hover:border-cyber-amber/50 transition-all flex items-center gap-1.5 cursor-pointer"
-                        >
-                          <ArrowRightLeft className="w-3.5 h-3.5" /> Instant Merge Sort
-                        </button>
-                        <button 
-                          onClick={() => handleAnimateSort('severity')}
-                          className="px-3.5 py-1.5 rounded-lg bg-cyber-amber/10 hover:bg-cyber-amber/25 border border-cyber-amber/35 text-cyber-amber font-mono font-bold text-[11px] transition-all flex items-center gap-1.5 cursor-pointer"
-                        >
-                          <Activity className="w-3.5 h-3.5 text-cyber-amber animate-pulse" /> Animate Merge Sort
-                        </button>
+                  {/* BENCHMARK STATS & BENCHMARK TRIGGERS */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-shrink-0">
+                    
+                    {/* TRIGGER CONTROLS CARD */}
+                    <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-4.5 space-y-3.5 shadow-md">
+                      <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider font-sans">Benchmark Algorithm Players</h4>
+                      <div className="grid grid-cols-2 gap-3.5">
+                        <div className="space-y-2">
+                          <span className="text-[10px] text-slate-400 font-semibold">Quick Sort (By Time)</span>
+                          <button 
+                            onClick={() => handleSortLogs('time')}
+                            className="w-full px-3.5 py-2 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-sans font-semibold text-slate-200 hover:bg-slate-800 transition flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                          >
+                            <Clock className="w-3.5 h-3.5" /> Instant Sort
+                          </button>
+                          <button 
+                            onClick={() => handleAnimateSort('time')}
+                            className="w-full px-3.5 py-2 rounded-lg bg-indigo-600/10 hover:bg-indigo-600/20 border border-indigo-500/20 text-indigo-400 font-sans font-semibold text-[11px] transition flex items-center justify-center gap-2 cursor-pointer"
+                          >
+                            <Activity className="w-3.5 h-3.5" /> Animate Trace
+                          </button>
+                        </div>
+                        <div className="space-y-2">
+                          <span className="text-[10px] text-slate-400 font-semibold">Merge Sort (By Severity)</span>
+                          <button 
+                            onClick={() => handleSortLogs('severity')}
+                            className="w-full px-3.5 py-2 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-sans font-semibold text-slate-200 hover:bg-slate-800 transition flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                          >
+                            <ArrowRightLeft className="w-3.5 h-3.5" /> Instant Sort
+                          </button>
+                          <button 
+                            onClick={() => handleAnimateSort('severity')}
+                            className="w-full px-3.5 py-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-500 font-sans font-semibold text-[11px] transition flex items-center justify-center gap-2 cursor-pointer"
+                          >
+                            <Activity className="w-3.5 h-3.5" /> Animate Trace
+                          </button>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="bg-[#030408]/65 border border-cyber-border/80 rounded-xl p-3.5 font-mono text-[11px] space-y-1.5">
-                      <div className="text-cyber-textMuted font-bold border-b border-cyber-border/40 pb-1 mb-1.5 uppercase">Algorithm Benchmark Statistics</div>
-                      <div className="flex justify-between"><span>Comparisons:</span><span className="text-cyber-cyan font-bold">{fw.logManager.sortMetrics.comparisons}</span></div>
-                      <div className="flex justify-between"><span>Array Writes/Swaps:</span><span className="text-cyber-cyan font-bold">{fw.logManager.sortMetrics.swaps}</span></div>
-                      <div className="flex justify-between"><span>Time Taken:</span><span className="text-cyber-emerald font-bold">{fw.logManager.sortMetrics.timeTakenMs} ms</span></div>
+                    {/* BENCHMARK STATS OUTPUT CARD */}
+                    <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-4.5 flex flex-col justify-between shadow-md">
+                      <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider font-sans">Metrics Evaluation</h4>
+                      <div className="grid grid-cols-3 gap-2.5 font-mono text-xs mt-3">
+                        <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/60 text-center">
+                          <div className="text-[9px] text-slate-500">Comparisons</div>
+                          <div className="text-sm font-bold text-indigo-400 mt-1">{fw.logManager.sortMetrics.comparisons}</div>
+                        </div>
+                        <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/60 text-center">
+                          <div className="text-[9px] text-slate-500">Array Writes</div>
+                          <div className="text-sm font-bold text-indigo-400 mt-1">{fw.logManager.sortMetrics.swaps}</div>
+                        </div>
+                        <div className="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/60 text-center">
+                          <div className="text-[9px] text-slate-500">Time Taken</div>
+                          <div className="text-sm font-bold text-emerald-400 mt-1 font-mono">{fw.logManager.sortMetrics.timeTakenMs} <span className="text-[9px] text-slate-400">ms</span></div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* LOGS TABLE */}
+                  {/* INSPECTION AUDIT RECORDS LOGS TABLE */}
                   {renderState.logs.length === 0 ? (
-                    <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-cyber-border rounded-xl p-8 font-mono text-xs text-cyber-textMuted italic">
-                      No logs recorded yet. Start processing packets!
+                    <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-slate-800 rounded-2xl p-10 text-slate-500 font-mono text-xs italic">
+                      Audit log records are empty. Process packet queue to insert records.
                     </div>
                   ) : (
-                    <div className="border border-cyber-border/80 rounded-2xl overflow-hidden flex-1 max-h-[350px] overflow-y-auto shadow-inner bg-[#030408]/45">
-                      <table className="w-full text-left font-mono text-xs border-collapse">
-                        <thead className="bg-[#030408]/90 text-cyber-textMuted border-b border-cyber-border/80 sticky top-0">
+                    <div className="border border-slate-800 rounded-2xl overflow-hidden flex-1 max-h-[350px] overflow-y-auto shadow-lg bg-slate-900/10 scrollbar-thin">
+                      <table className="w-full text-left font-mono text-[11px] border-collapse">
+                        <thead className="bg-slate-900 border-b border-slate-800 text-slate-400 uppercase tracking-wider text-[9px] font-bold sticky top-0">
                           <tr>
-                            <th className="p-3">Index</th>
-                            <th className="p-3">Timestamp</th>
-                            <th className="p-3">Action</th>
-                            <th className="p-3">Source IP</th>
-                            <th className="p-3">Port</th>
-                            <th className="p-3">Matched Rule</th>
-                            <th className="p-3 text-right">Pri</th>
+                            <th className="p-3.5">Offset</th>
+                            <th className="p-3.5">Timestamp</th>
+                            <th className="p-3.5">Verdict</th>
+                            <th className="p-3.5">SourceIP</th>
+                            <th className="p-3.5">Port (Proto)</th>
+                            <th className="p-3.5">Matched ID</th>
+                            <th className="p-3.5 text-right font-bold">Priority</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-cyber-border/40">
+                        <tbody className="divide-y divide-slate-800/60">
                           {renderState.logs.map((log, idx) => {
                             const isComparing = renderState.highlights.sortComparing?.includes(idx);
                             const isSwapping = renderState.highlights.sortSwapping?.includes(idx);
-                            let rowClass = "hover:bg-cyber-cardLight/50 transition";
+                            let rowClass = "hover:bg-slate-900/40 transition";
                             
                             if (isSwapping) {
-                              rowClass = "bg-cyber-amber/20 text-cyber-amber font-bold border-y border-cyber-amber/35";
+                              rowClass = "bg-amber-500/10 text-amber-400 font-bold border-y border-amber-500/30";
                             } else if (isComparing) {
-                              rowClass = "bg-cyber-cyan/20 text-cyber-cyan font-bold border-y border-cyber-cyan/35";
+                              rowClass = "bg-indigo-500/10 text-indigo-400 font-bold border-y border-indigo-500/30";
                             }
 
                             return (
                               <tr key={`log-${idx}`} className={rowClass}>
-                                <td className="p-3 text-cyber-textMuted text-[10px]">#{idx}</td>
-                                <td className="p-3 text-cyber-textMuted whitespace-nowrap">{log.timestamp}</td>
-                                <td className="p-3 font-bold">
-                                  <span className={log.action === "BLOCKED" ? "text-cyber-rose" : "text-cyber-emerald"}>
+                                <td className="p-3.5 text-slate-500 text-[10px]">#{idx}</td>
+                                <td className="p-3.5 text-slate-400 whitespace-nowrap">{log.timestamp}</td>
+                                <td className="p-3.5 font-bold">
+                                  <span className={`px-2 py-0.5 rounded-full text-[9px] border ${log.action === "BLOCKED" ? "bg-rose-500/10 text-rose-400 border-rose-500/20" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"}`}>
                                     {log.action}
                                   </span>
                                 </td>
-                                <td className="p-3">{log.sourceIP}</td>
-                                <td className="p-3 text-cyber-cyan">{log.port} <span className="text-[10px] text-cyber-textMuted">({log.protocol})</span></td>
-                                <td className="p-3 text-cyber-textMuted">{log.ruleID}</td>
-                                <td className="p-3 text-right font-bold">{log.priority}</td>
+                                <td className="p-3.5 text-slate-200">{log.sourceIP}</td>
+                                <td className="p-3.5 text-indigo-400">{log.port} <span className="text-[10px] text-slate-500">({log.protocol})</span></td>
+                                <td className="p-3.5 text-slate-400 font-bold">{log.ruleID}</td>
+                                <td className="p-3.5 text-right font-bold text-slate-200">{log.priority}</td>
                               </tr>
                             );
                           })}

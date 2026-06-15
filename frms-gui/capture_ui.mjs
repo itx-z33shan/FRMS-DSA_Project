@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 
-const base = 'http://localhost:5173';
+const base = 'http://127.0.0.1:5173';
 const out = 'C:\\Users\\PMLS\\Documents\\PORJECT\\frms-gui\\';
 
 const browser = await chromium.launch({ headless: true });
