@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
+
 import { 
   Shield, 
   Activity, 
@@ -15,7 +15,9 @@ import {
   Clock,
   Flame,
   ArrowRightLeft,
-  X
+  X,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import { MaxHeap, Firewall, Packet, Rule, LogEntry, MAX_PACKETS, HASH_TABLE_SIZE, BSTNode } from './utils/structures';
 import type { HeapTraceStep, SortTraceStep } from './utils/structures';
@@ -569,6 +571,7 @@ export default function App() {
 
   // UI state
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [networkMapExpanded, setNetworkMapExpanded] = useState(false);
 
   // Stepper Playback Loop Effect
   useEffect(() => {
@@ -1475,7 +1478,88 @@ export default function App() {
 
   return (
     <div className="h-screen w-screen bg-[#090d16] text-[#f8fafc] flex flex-col overflow-hidden font-sans antialiased relative">
-      
+
+      {/* ═══ FLOATING LIVE TRAFFIC NETWORK MAP WIDGET (fixed bottom-right) ═══ */}
+      <div
+        className={`fixed z-50 transition-all duration-300 ease-in-out ${
+          networkMapExpanded
+            ? 'bottom-4 right-4 w-[360px]'
+            : 'bottom-4 right-4 w-auto'
+        }`}
+        style={{ filter: 'drop-shadow(0 8px 32px rgba(0,0,0,0.6))' }}
+      >
+        {networkMapExpanded ? (
+          /* EXPANDED PANEL */
+          <div
+            className="rounded-2xl overflow-hidden animate-fade-in"
+            style={{
+              background: 'rgba(9,13,22,0.97)',
+              border: '1px solid rgba(6,182,212,0.25)',
+              boxShadow: '0 0 0 1px rgba(6,182,212,0.08), 0 20px 50px rgba(0,0,0,0.7), 0 0 30px rgba(6,182,212,0.06)'
+            }}
+          >
+            {/* Header */}
+            <div
+              className="flex items-center justify-between px-4 py-2.5 border-b border-slate-800/60"
+              style={{ background: 'linear-gradient(90deg, rgba(6,182,212,0.08) 0%, transparent 100%)' }}
+            >
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">Live Traffic Network Map</span>
+              </div>
+              <button
+                onClick={() => setNetworkMapExpanded(false)}
+                className="p-1 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-slate-800/60 transition"
+                title="Collapse"
+              >
+                <Minimize2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            {/* Canvas */}
+            <div className="p-3">
+              <TrafficNetworkCanvas lastTriggerPkt={lastTriggerPkt} compact={false} />
+            </div>
+          </div>
+        ) : (
+          /* COLLAPSED PILL */
+          <button
+            onClick={() => setNetworkMapExpanded(true)}
+            title="Open Live Traffic Network Map"
+            className="group flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl cursor-pointer transition-all duration-200 hover:scale-105"
+            style={{
+              background: 'rgba(9,13,22,0.95)',
+              border: '1px solid rgba(6,182,212,0.2)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.5), 0 0 16px rgba(6,182,212,0.06)'
+            }}
+          >
+            {/* Animated live dots */}
+            <div className="relative flex items-center gap-0.5">
+              {[0, 1, 2].map(i => (
+                <span
+                  key={i}
+                  className="w-1.5 h-1.5 rounded-full bg-cyan-400"
+                  style={{
+                    animation: `scanPulse 1.4s ease-in-out infinite`,
+                    animationDelay: `${i * 200}ms`,
+                    opacity: lastTriggerPkt ? 1 : 0.5
+                  }}
+                />
+              ))}
+            </div>
+            <span className="text-[10px] font-bold text-slate-400 group-hover:text-cyan-400 transition-colors uppercase tracking-widest whitespace-nowrap">
+              Traffic Map
+            </span>
+            {/* Last packet indicator */}
+            {lastTriggerPkt && (
+              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                lastTriggerPkt.action === 'BLOCK' ? 'bg-rose-400' : 'bg-emerald-400'
+              }`} style={{ animation: 'scanPulse 1s ease-in-out 2' }}></span>
+            )}
+            <Maximize2 className="w-3 h-3 text-slate-600 group-hover:text-cyan-400 transition-colors" />
+          </button>
+        )}
+      </div>
+
       {/* Premium mesh background glows */}
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 40% at 20% 0%, rgba(99,102,241,0.06) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 80% 100%, rgba(139,92,246,0.05) 0%, transparent 60%)' }}></div>
       <div className="absolute top-0 left-1/3 w-[700px] h-[400px] bg-indigo-600/[0.03] rounded-full blur-[120px] pointer-events-none"></div>
@@ -1571,16 +1655,6 @@ export default function App() {
           {/* Expanded Configuration Panel */}
           <div className={`${sidebarCollapsed ? 'hidden' : 'flex flex-col h-full min-h-0'} w-full`}> 
 
-            {/* MINI LIVE TRAFFIC MAP (PINNED TOP) */}
-            <div className="px-4 pt-3 pb-3 border-b border-slate-800/60 bg-[#0b101f] relative overflow-hidden flex-shrink-0">
-              <div className="flex items-center gap-1.5 mb-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Live Traffic Monitor</span>
-              </div>
-              <div className="relative z-10">
-                <TrafficNetworkCanvas lastTriggerPkt={lastTriggerPkt} compact />
-              </div>
-            </div>
 
             {/* SCROLLABLE SIDEBAR SECTION */}
             <div className="flex-1 overflow-y-auto p-4 space-y-5 scrollbar-thin">
@@ -1870,87 +1944,8 @@ export default function App() {
         {/* ═══════════ MAIN VISUALIZATION STAGE (RIGHT) ═══════════ */}
         <div className="flex-1 flex flex-col overflow-hidden bg-[#090d16] relative">
 
-          {/* DYNAMIC BACKING ALGORITHM STEPPER PANEL */}
-          {isStepperActive && stepperSteps.length > 0 && createPortal(
-            <div className="fixed top-16 left-1/2 transform -translate-x-1/2 w-[92%] max-w-5xl z-[999] animate-fade-in flex flex-col font-sans text-xs" style={{ background: 'rgba(9,13,22,0.96)', backdropFilter: 'blur(24px)', border: '1px solid rgba(99,102,241,0.25)', borderRadius: '16px', boxShadow: '0 20px 60px -10px rgba(0,0,0,0.8), 0 0 0 1px rgba(99,102,241,0.1), 0 0 40px rgba(99,102,241,0.08)', padding: '0' }}>
-              {/* Progress bar - gradient */}
-              <div className="relative h-0.5 w-full rounded-t-[16px] overflow-hidden bg-slate-800/60">
-                <div 
-                  className="absolute top-0 left-0 h-full transition-all duration-500 ease-out" 
-                  style={{ width: `${((stepperIndex + 1) / stepperSteps.length) * 100}%`, background: 'linear-gradient(90deg, #6366f1, #8b5cf6, #06b6d4)' }}
-                ></div>
-              </div>
-              <div className="px-5 py-4 flex flex-col gap-3">
-              
-              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-center gap-2 text-[10px] text-indigo-400 font-bold uppercase tracking-wider">
-                    <span>Algorithm Debug Stage ({stepperSteps[stepperIndex].tab.toUpperCase()})</span>
-                    <span className="text-slate-800">•</span>
-                    <span>Step {stepperIndex + 1} / {stepperSteps.length}</span>
-                  </div>
-                  <p className="text-white text-sm font-semibold leading-relaxed tracking-tight">
-                    {simpleMode ? stepperSteps[stepperIndex].simpleExplanation : stepperSteps[stepperIndex].message}
-                  </p>
-                </div>
 
-                <div className="flex items-center gap-2.5 bg-slate-900/60 border border-slate-800/80 px-3 py-1.5 rounded-xl flex-shrink-0">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Analogy View</span>
-                  <button
-                    onClick={() => setSimpleMode(!simpleMode)}
-                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${simpleMode ? 'bg-indigo-600' : 'bg-slate-700'}`}
-                  >
-                    <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${simpleMode ? 'translate-x-4.5' : 'translate-x-1'}`} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Segmented Pipeline Stages */}
-              <div className="grid grid-cols-4 text-center font-mono text-[9px] gap-2 pt-1">
-                {[
-                  { label: '1. Conveyor Queue', tab: 'queue', desc: 'FIFO Buffer' },
-                  { label: '2. Hash Directory', tab: 'hash', desc: 'Bucket Index' },
-                  { label: '3. Blacklist BST', tab: 'bst', desc: 'Range Search' },
-                  { label: '4. Logging Registry', tab: 'logs', desc: 'Commit Record' }
-                ].map((stage) => {
-                  const stepTab = stepperSteps[stepperIndex].tab;
-                  const isCurrent = stepTab === stage.tab;
-                  let isActive = false;
-                  if (stage.tab === 'queue' && (stepTab === 'queue' || stepTab === 'hash' || stepTab === 'bst' || stepTab === 'logs')) isActive = true;
-                  if (stage.tab === 'hash' && (stepTab === 'hash' || stepTab === 'bst' || stepTab === 'logs' || stepTab === 'heap')) isActive = true;
-                  if (stage.tab === 'bst' && (stepTab === 'bst' || stepTab === 'logs')) isActive = true;
-                  if (stage.tab === 'logs' && stepTab === 'logs') isActive = true;
-                  return (
-                    <div 
-                      key={stage.label}
-                      className={`p-2 rounded-lg border transition-all duration-300 ${isCurrent ? 'bg-indigo-600/20 border-indigo-500 text-indigo-300 font-bold shadow-indigo-glow' : isActive ? 'bg-slate-900 border-slate-800 text-slate-300' : 'border-transparent text-slate-600'}`}
-                    >
-                      <div className="uppercase tracking-wider font-semibold text-[8px]">{stage.label}</div>
-                      <div className="text-[7.5px] opacity-70 mt-0.5">{stage.desc}</div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Player Timeline controls */}
-              <div className="flex flex-row justify-between items-center border-t border-slate-800/80 pt-2.5 mt-1 gap-4">
-                <div className="flex items-center gap-1.5">
-                  <button onClick={() => { setStepperIndex(0); setIsStepperPlaying(false); }} disabled={stepperIndex === 0} className="px-3 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-[10px] font-semibold disabled:opacity-40 transition cursor-pointer">Reset</button>
-                  <button onClick={() => { setStepperIndex(prev => Math.max(0, prev - 1)); setIsStepperPlaying(false); }} disabled={stepperIndex === 0} className="px-3 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-[10px] font-semibold disabled:opacity-40 transition cursor-pointer">◀ Prev</button>
-                  <button onClick={() => setIsStepperPlaying(!isStepperPlaying)} className={`px-4.5 py-1 rounded font-bold text-[10px] transition cursor-pointer ${isStepperPlaying ? 'bg-rose-600/20 text-rose-300 border border-rose-500/30' : 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30'}`}>{isStepperPlaying ? '⏸ Pause' : '▶ Play'}</button>
-                  <button onClick={() => { setStepperIndex(prev => Math.min(stepperSteps.length - 1, prev + 1)); setIsStepperPlaying(false); }} disabled={stepperIndex === stepperSteps.length - 1} className="px-3 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-[10px] font-semibold disabled:opacity-40 transition cursor-pointer">Next ▶</button>
-                  <button onClick={() => { setIsStepperActive(false); setIsStepperPlaying(false); syncState(); }} className="ml-2 px-3 py-1 rounded bg-rose-600/10 hover:bg-rose-600/25 border border-rose-500/30 text-rose-400 text-[10px] font-semibold transition cursor-pointer">✕ Exit Trace</button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[9px] text-slate-400 font-mono font-bold uppercase">{stepperSpeed}ms</span>
-                  <input type="range" min="200" max="2000" step="100" value={stepperSpeed} onChange={e => setStepperSpeed(Number(e.target.value))} className="w-24 h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500" />
-                </div>
-              </div>
-              </div>
-            </div>, document.body
-          )}
-
-          {/* TABBED VISUALIZATIONWORKSPACE */}
+          {/* TABBED VISUALIZATION WORKSPACE */}
           <div className="flex-1 flex flex-col overflow-hidden">  
             
             {/* LARGE TABS NAVIGATION */}
@@ -1984,8 +1979,140 @@ export default function App() {
               })}
             </div>
 
+            {/* ═══ INLINE ALGORITHM STEPPER STRIP (Option D — pinned between tabs and content) ═══ */}
+            {isStepperActive && stepperSteps.length > 0 && (
+              <div className="flex-shrink-0 border-b border-indigo-500/20 animate-fade-in font-sans text-xs" style={{ background: 'linear-gradient(180deg, rgba(9,11,20,0.98) 0%, rgba(13,17,32,0.98) 100%)', borderTop: '1px solid rgba(99,102,241,0.15)' }}>
+
+                {/* Gradient progress bar — top edge */}
+                <div className="relative h-[2px] w-full overflow-hidden">
+                  <div
+                    className="absolute top-0 left-0 h-full transition-all duration-500 ease-out"
+                    style={{ width: `${((stepperIndex + 1) / stepperSteps.length) * 100}%`, background: 'linear-gradient(90deg, #6366f1, #8b5cf6, #06b6d4)', boxShadow: '0 0 8px rgba(99,102,241,0.6)' }}
+                  ></div>
+                </div>
+
+                {/* ROW 1: Step message + Analogy toggle */}
+                <div className="flex items-start justify-between gap-4 px-5 pt-3 pb-2">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="inline-flex items-center gap-1.5 text-[9px] font-bold text-indigo-400 uppercase tracking-widest">
+                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+                        {stepperSteps[stepperIndex].tab.toUpperCase()} TRACE
+                      </span>
+                      <span className="text-slate-700">·</span>
+                      <span className="text-[9px] font-mono text-slate-500">
+                        Step {stepperIndex + 1} / {stepperSteps.length}
+                      </span>
+                    </div>
+                    <p className="text-[12px] text-white font-semibold leading-snug tracking-tight truncate">
+                      {simpleMode ? stepperSteps[stepperIndex].simpleExplanation : stepperSteps[stepperIndex].message}
+                    </p>
+                  </div>
+
+                  {/* Analogy mode toggle */}
+                  <div className="flex items-center gap-2 flex-shrink-0 bg-slate-900/60 border border-slate-800/60 px-2.5 py-1.5 rounded-lg">
+                    <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider whitespace-nowrap">Analogy</span>
+                    <button
+                      onClick={() => setSimpleMode(!simpleMode)}
+                      className={`relative inline-flex h-4.5 w-8 items-center rounded-full transition-colors focus:outline-none flex-shrink-0 ${
+                        simpleMode ? 'bg-indigo-600' : 'bg-slate-700'
+                      }`}
+                    >
+                      <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                        simpleMode ? 'translate-x-4' : 'translate-x-1'
+                      }`} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* ROW 2: Pipeline stages + playback controls */}
+                <div className="flex items-center justify-between gap-3 px-5 pb-2.5 border-t border-slate-800/40 pt-2">
+
+                  {/* Pipeline stage breadcrumbs */}
+                  <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
+                    {[
+                      { label: 'Queue',    tab: 'queue', shortLabel: '① Queue' },
+                      { label: 'Hash',     tab: 'hash',  shortLabel: '② Hash' },
+                      { label: 'BST',      tab: 'bst',   shortLabel: '③ BST' },
+                      { label: 'Logs',     tab: 'logs',  shortLabel: '④ Logs' },
+                    ].map((stage, i, arr) => {
+                      const stepTab = stepperSteps[stepperIndex].tab;
+                      const isCurrent = stepTab === stage.tab;
+                      let isDone = false;
+                      if (stage.tab === 'queue' && (stepTab === 'hash' || stepTab === 'bst' || stepTab === 'logs')) isDone = true;
+                      if (stage.tab === 'hash'  && (stepTab === 'bst'  || stepTab === 'logs')) isDone = true;
+                      if (stage.tab === 'bst'   && stepTab === 'logs') isDone = true;
+                      return (
+                        <React.Fragment key={stage.tab}>
+                          <span className={`px-2.5 py-1 rounded-md text-[9px] font-bold whitespace-nowrap transition-all duration-300 ${
+                            isCurrent
+                              ? 'bg-indigo-600/25 text-indigo-300 border border-indigo-500/50 shadow-indigo-glow'
+                              : isDone
+                              ? 'bg-emerald-500/10 text-emerald-500/70 border border-emerald-500/20'
+                              : 'text-slate-600 border border-transparent'
+                          }`}>
+                            {isCurrent && <span className="mr-1">▶</span>}
+                            {isDone && <span className="mr-1">✓</span>}
+                            {stage.shortLabel}
+                          </span>
+                          {i < arr.length - 1 && (
+                            <span className="text-slate-800 text-xs flex-shrink-0">›</span>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+                  </div>
+
+                  {/* Playback controls */}
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    <button
+                      onClick={() => { setStepperIndex(0); setIsStepperPlaying(false); }}
+                      disabled={stepperIndex === 0}
+                      className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 text-[10px] font-semibold disabled:opacity-30 transition cursor-pointer"
+                    >⟪</button>
+                    <button
+                      onClick={() => { setStepperIndex(prev => Math.max(0, prev - 1)); setIsStepperPlaying(false); }}
+                      disabled={stepperIndex === 0}
+                      className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-[10px] font-semibold disabled:opacity-30 transition cursor-pointer"
+                    >◀</button>
+                    <button
+                      onClick={() => setIsStepperPlaying(!isStepperPlaying)}
+                      className={`px-3 py-1 rounded-md font-bold text-[10px] transition cursor-pointer ${
+                        isStepperPlaying
+                          ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30 hover:bg-rose-500/25'
+                          : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25'
+                      }`}
+                    >{isStepperPlaying ? '⏸ Pause' : '▶ Play'}</button>
+                    <button
+                      onClick={() => { setStepperIndex(prev => Math.min(stepperSteps.length - 1, prev + 1)); setIsStepperPlaying(false); }}
+                      disabled={stepperIndex === stepperSteps.length - 1}
+                      className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-[10px] font-semibold disabled:opacity-30 transition cursor-pointer"
+                    >▶</button>
+
+                    <span className="w-px h-4 bg-slate-800 mx-1"></span>
+
+                    {/* Speed slider */}
+                    <span className="text-[9px] text-slate-500 font-mono">{stepperSpeed}ms</span>
+                    <input
+                      type="range" min="200" max="2000" step="100"
+                      value={stepperSpeed}
+                      onChange={e => setStepperSpeed(Number(e.target.value))}
+                      className="w-20 cursor-pointer"
+                    />
+
+                    <span className="w-px h-4 bg-slate-800 mx-1"></span>
+
+                    <button
+                      onClick={() => { setIsStepperActive(false); setIsStepperPlaying(false); syncState(); }}
+                      className="px-2.5 py-1 rounded-md bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/25 text-rose-400 text-[10px] font-semibold transition cursor-pointer"
+                    >✕ Exit</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* TAB CONTENT AREAS */}
-            <div className={`p-6 flex-1 overflow-y-auto min-h-0 relative ${isStepperActive ? 'pt-36' : ''}`}>
+            <div className="p-6 flex-1 overflow-y-auto min-h-0 relative">
               
               {/* TAB 1: CONVEYOR PACKET QUEUE */}
               {activeTab === 'queue' && (
